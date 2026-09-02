@@ -1,0 +1,23 @@
+aid: ocean-health-systems
+name: Ocean Health Systems
+description: 'Ocean Health Systems is a company surfaced via the API Evangelist harvest backlog (source:
+  openehr-coalition) and added to the network as a stub for full-pipeline profiling.'
+url: https://raw.githubusercontent.com/api-evangelist/ocean-health-systems/refs/heads/main/apis.yml
+x-type: company
+x-source: harvest:openehr-coalition
+x-tier: stub
+x-tier-reason: harvest
+specificationVersion: '0.20'
+created: '2026-09-02'
+modified: '2026-09-02'
+tags:
+- Company
+apis: []
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
+- FN: APIs.json
+  email: info@apis.io
+common:
+- type: Website
+  url: http://www.oceanhealthsystems.com/
