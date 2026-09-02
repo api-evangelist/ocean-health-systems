@@ -1,0 +1,62 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  npm registry search, PyPI, Maven Central, NuGet, plus oceanhealthsystems.com/software/*
+  product pages (probed 2026-09-02)
+summary:
+  package_count: 0
+  official_sdk_count: 0
+  note: >-
+    Ocean Health Systems publishes no first-party client library or SDK for the CKM REST API in any
+    public package registry. Searched npm (registry.npmjs.org search for "ckm openehr"), PyPI
+    (ckm-client, openehr-ckm, ocean-ckm), Maven Central (g:*oceaninformatics*, and a free-text
+    "ckm openehr" query), and NuGet (q=oceaninformatics) on 2026-09-02 — every query returned zero
+    first-party results. The only openEHR client libraries on those registries are third-party
+    community projects (openehr-client-js, medblocks-ui, openehr-tools) that target openEHR CDRs
+    rather than the CKM API, and none are published by Ocean.
+packages: []
+distributions:
+  - name: Archetype Editor
+    kind: desktop-application
+    official: true
+    registry: none
+    distribution: gated-download
+    url: https://oceanhealthsystems.com/software/archetype-editor
+    version: null
+    published: null
+    licence: 'stated on the product page as "Free Software" / open source; no licence file located'
+    note: >-
+      First-party openEHR archetype authoring tool (ADL). Checked 2026-09-02, status 200 — the page
+      describes the tool but publishes no download URL, no version string and no release date; access
+      is behind a "get started" contact form. version/published recorded as null because there is
+      nothing published to read, not because the check was skipped.
+  - name: Template Designer
+    kind: desktop-application
+    official: true
+    registry: none
+    distribution: gated-download
+    url: https://oceanhealthsystems.com/software/template-designer
+    version: null
+    published: null
+    licence: 'stated on the product page as "Free Software"; no licence file located'
+    note: >-
+      First-party openEHR template (OET/OPT) authoring tool. Checked 2026-09-02, status 200 — no
+      download URL, version or release date is published; the page routes to a contact form.
+      version/published are null for the same reason as Archetype Editor.
+registries_checked:
+  - registry: npm
+    query: 'https://registry.npmjs.org/-/v1/search?text=ckm+openehr'
+    status: 200
+    first_party_hits: 0
+  - registry: pypi
+    query: 'https://pypi.org/pypi/{ckm-client,openehr-ckm,ocean-ckm}/json'
+    status: 404
+    first_party_hits: 0
+  - registry: maven-central
+    query: 'https://search.maven.org/solrsearch/select?q=ckm+openehr'
+    status: 200
+    first_party_hits: 0
+  - registry: nuget
+    query: 'https://azuresearch-usnc.nuget.org/query?q=oceaninformatics'
+    status: 200
+    first_party_hits: 0

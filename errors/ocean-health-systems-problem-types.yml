@@ -1,0 +1,88 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+docs: https://ckm.openehr.org/ckm/rest-doc/
+format: http-status
+format_note: >-
+  The CKM REST API does NOT use RFC 9457 application/problem+json. Error signalling is the HTTP
+  status code plus a plain-text or empty body; the spec declares produces of application/json,
+  application/xml and text/plain and defines no error schema in definitions[]. Every entry below is
+  derived from a declared 4xx response in the spec, with the title taken verbatim from the response
+  description.
+summary:
+  status_codes: 6
+  responses_declared: 104
+  problem_json: false
+  error_schema_defined: false
+problem_types:
+  - status: 400
+    title: Bad request
+    occurrences: 45
+    meaning: >-
+      Malformed or unparsable payload or parameter. Declared for the ADL, OET and user payloads —
+      "the ADL format is invalid", "the OET format is invalid", "the provided user format is invalid
+      (unparsable) or there were fatal validation errors", and for a structurally invalid citeable
+      identifier or an unrecognised status value.
+    remediation: >-
+      Validate the ADL/OET locally before submitting; for templates, call
+      POST /templates/validation-report first — it returns CKM's own validation report for an OET
+      without importing it.
+  - status: 401
+    title: Not authenticated
+    occurrences: 4
+    meaning: >-
+      "Log in required to use this service", "Could not authenticate the user due to incorrect
+      details in the Authorization header", or "The supplied session is not valid or has already
+      expired".
+    remediation: >-
+      Send HTTP Basic credentials, or a JSESSIONID header obtained from POST /sessions. Sessions
+      expire — re-authenticate rather than retrying the same session id.
+  - status: 403
+    title: Forbidden
+    occurrences: 15
+    meaning: >-
+      Authenticated but not permitted, OR the resource is in a state that forbids the operation.
+      CKM overloads 403 for both: "the specified archetype cannot be deleted with the provided
+      credentials or because there are other reasons", "the user may not be allowed to upload to the
+      stated project", and also the purely state-based "the specified archetype does not have a
+      status (branch archetype)".
+    remediation: >-
+      Check project editor rights for the target project, and check whether the resource is a branch
+      rather than a trunk resource — several 403s are a shape error, not a permissions error.
+  - status: 404
+    title: Not found
+    occurrences: 35
+    meaning: >-
+      The citeable identifier, archetype id, template id, project, subdomain, change request or
+      resource proposal does not exist — or exists but is not visible to the supplied credentials.
+      The spec states this ambiguity explicitly ("does not exist (or is not visible to the current
+      user)").
+    remediation: >-
+      404 does not distinguish absence from lack of visibility. Authenticate before concluding a
+      resource is gone, and resolve archetype/template ids to citeable identifiers via
+      /archetypes/citeable-identifier/{archetype-id} or /templates/citeable-identifier/{template-id}.
+  - status: 412
+    title: Precondition failed
+    occurrences: 3
+    meaning: >-
+      An if-match or if-unmodified-since header precondition failed — the optimistic-locking check
+      on updateArchetypeOnTrunk, updateTemplateOnTrunk and updateTemplateStatus.
+    remediation: >-
+      Re-read the resource (and its hash via /archetypes/{cid}/hash or /templates/{cid}/hash),
+      re-apply the change against the new revision, and retry with the fresh if-match value. Do not
+      retry the same request unchanged.
+  - status: 424
+    title: Failed dependency
+    occurrences: 2
+    meaning: >-
+      "Dependencies to required archetypes and/or embedded templates failed" — validation errors or
+      warnings in the resources the submitted template depends on.
+    remediation: >-
+      Call POST /templates/validation-report on the OET first; pass
+      proceed-if-outdated-resources-used=true only when the outdated dependency is intentional.
+envelope:
+  shape: none
+  note: >-
+    No machine-readable error envelope. The spec defines no error schema, so an agent has only the
+    status code and a human-readable description to work from. This is the single largest error-
+    semantics gap in the contract.

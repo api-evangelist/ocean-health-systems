@@ -1,0 +1,30 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  https://oceanhealthsystems.com/ (200), https://oceanhealthsystems.com/products/ckm/ (200),
+  https://oceanhealthsystems.com/software/ckm-rocks (200),
+  https://oceanhealthsystems.com/page-sitemap.xml (200) — searched 2026-09-02
+plan_count: 0
+currency: null
+plans: []
+note: >-
+  Ocean Health Systems publishes no pricing. The full page sitemap was enumerated and contains no
+  pricing, plans or subscribe page; every product page (CKM, Multiprac Immunize, Surveillance,
+  Archetype Editor, Template Designer) ends in "Book a Demo" against a HubSpot form
+  (https://share-ap1.hsforms.com/12McPHU20T1CUHxlMBaozqw2wis3) or a meeting link
+  (https://meetings.hubspot.com/linden-bungey). This is an enterprise sales-gated model, and the
+  CKM REST API is not sold separately — it ships with a CKM instance.
+tiering_signal:
+  detail: >-
+    One page describes a commercial shape without naming prices. "CKM rocks"
+    (https://oceanhealthsystems.com/software/ckm-rocks, 200) is a shared multi-tenant CKM instance
+    where "customers can rent a project within CKM rocks and choose from various maximum asset
+    levels" — i.e. an asset-count-tiered rental. No tier names, no price points and no published
+    asset thresholds, so nothing is recorded in plans[].
+  source: https://oceanhealthsystems.com/software/ckm-rocks
+free_access:
+  detail: >-
+    Reading public projects on a public CKM instance requires no account and no payment — the
+    reference instance at https://ckm.openehr.org/ckm/rest/v1 serves the read operations
+    anonymously. That is a property of a deployment, not a published Ocean plan, so it is not
+    recorded as a free tier.

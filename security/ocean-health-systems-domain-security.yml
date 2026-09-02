@@ -1,0 +1,27 @@
+generated: '2026-09-02'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: oceanhealthsystems.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 20 11:00:41 2026 GMT
+  hsts: false
+- host: ckm.openehr.org
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct  5 19:15:14 2026 GMT
+  hsts: false
+domains:
+- domain: oceanhealthsystems.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none
+- domain: openehr.org
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

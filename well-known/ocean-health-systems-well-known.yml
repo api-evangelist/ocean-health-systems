@@ -1,0 +1,106 @@
+generated: '2026-09-02'
+method: probed
+source: >-
+  live GET of the named /.well-known/ path list against every host in apis.yml and every host that
+  serves the CKM REST API, 2026-09-02
+summary:
+  hosts_probed: 3
+  documents_served: 0
+  note: >-
+    No /.well-known/ document is served on any host. A control probe of
+    /.well-known/zzz-not-real-9f2 also returned 404 on both hosts, so these are true 404s and not an
+    SPA catch-all answering 200 for everything. Because nothing was served, NO WellKnown or
+    SecurityTxt pointer is wired into apis.yml — this file records a measured absence, not a
+    presence.
+hosts:
+  - host: oceanhealthsystems.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/aauth-resource.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: www.oceanhealthsystems.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/aauth-resource.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: ckm.openehr.org
+    note: >-
+      Reference public deployment of Ocean's CKM software; the CKM REST API is served from this host
+      at /ckm/rest/v1. The host itself is operated by openEHR International, so a served document
+      here would belong to that deployment rather than to Ocean — recorded for completeness.
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 404
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+        file: null
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/aauth-resource.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null

@@ -1,0 +1,164 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+docs: https://ckm.openehr.org/ckm/rest-doc/
+api: CKM REST API 1.6.0
+authentication:
+  styles:
+    - http-basic
+    - session-cookie-as-header
+  detail: >-
+    Two declared schemes, applied per operation rather than globally. basicAuth is RFC 7617 HTTP
+    Basic with the CKM username and password. sessionid is an apiKey scheme carrying JSESSIONID in a
+    request HEADER (not a cookie), obtained from POST /sessions and torn down with DELETE /sessions.
+    The spec notes that every operation can also authenticate directly with Basic, so the session is
+    an optimisation rather than a requirement. Read operations on public projects work unauthenticated.
+  bearer_tokens: false
+  api_keys: false
+  oauth2: false
+  cross_link: authentication/ocean-health-systems-authentication.yml
+idempotency:
+  supported: false
+  idempotency_key_header: null
+  mechanism: conditional-requests
+  detail: >-
+    The API declares NO idempotency key and no replay window. What it does declare is optimistic
+    concurrency control: updateArchetypeOnTrunk, updateTemplateOnTrunk and updateTemplateStatus all
+    accept if-match and if-unmodified-since request headers and return 412 Precondition Failed when
+    the precondition fails, and MD5 validators are published at GET /archetypes/{cid-archetype}/hash
+    and GET /templates/{cid-template}/hash. That makes a lost-update safe, but it does NOT make a
+    retry safe: a client that retries POST /archetypes or POST /templates after a timeout has no way
+    to tell CKM this is the same import. No Idempotency pointer is wired into apis.yml, because the
+    provider ships no idempotency mechanism.
+  retention: null
+pagination:
+  style: offset-limit
+  params:
+    offset: offset
+    limit: size
+  response_fields: []
+  detail: >-
+    GET /archetypes, GET /templates, GET /change-requests and GET /resource-proposals accept integer
+    offset and size query parameters. The contract declares no total-count field, no total-count
+    header and no next/prev link, so a client can request a page but cannot learn how many remain —
+    it must page until a short response comes back.
+filtering:
+  detail: >-
+    The list operations carry a rich declared filter surface rather than a query language:
+    search-text with require-all-search-words and restrict-search-to-main-data, class and
+    include-subclasses / require-all-classes, resource-state, status, resource-type, template-type,
+    project-type, cid-project, cid-subdomain, semantic-version, start-date / end-date, language and
+    locale, plus scoping booleans (my-projects-only, my-editor-projects-only, owned-only,
+    direct-only, get-latest-published, show-all-to-admin).
+expansion:
+  supported: false
+  detail: >-
+    No field-expansion or sparse-fieldset parameter. Related data is fetched with dedicated
+    sub-resource operations instead — /archetypes/{cid}/parent, /archetypes/{cid}/project,
+    /templates/{cid}/required-archetypes, /templates/{cid}/embedded-templates,
+    /subdomains/{cid}/projects.
+metadata:
+  custom_fields: false
+  detail: >-
+    No customer-defined metadata bag. Governance metadata is fixed by the CkmResource schema —
+    citeable identifier (cid), asset version, SemVer revision, status, creation and modification
+    times, owning project and branch name.
+identifiers:
+  primary: citeable-identifier
+  detail: >-
+    Every resource is addressed by a CKM citeable identifier (cid), example "1013.1.130", not by an
+    opaque UUID or the openEHR archetype id. Two resolver operations exist for crossing the boundary:
+    GET /archetypes/citeable-identifier/{archetype-id} and
+    GET /templates/citeable-identifier/{template-id}. Archetypes additionally carry uid (changes on a
+    major version) and buildUid (changes per commit).
+request_tracing:
+  request_id_header: null
+  detail: >-
+    No request id or correlation header is declared in the contract. There is an application-level
+    audit input instead — the required log-message query parameter on importArchetype,
+    updateArchetypeOnTrunk, importTemplate and updateTemplateOnTrunk, which is recorded in the
+    resource's revision history.
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: >-
+    The API version is pinned in the path: basePath /ckm/rest/v1. The spec's own info.version is
+    1.6.0 and moves independently of the CKM application version (1.21.0 on the reference instance
+    at 2026-09-02). No version header, no date-based version, no declared deprecation of v1.
+  cross_link: lifecycle/ocean-health-systems-lifecycle.yml
+error_envelope:
+  shape: none
+  media_types:
+    - application/json
+    - application/xml
+    - text/plain
+  detail: >-
+    No error schema is defined and no application/problem+json is offered. Clients get an HTTP
+    status code and prose. See errors/ocean-health-systems-problem-types.yml.
+  cross_link: errors/ocean-health-systems-problem-types.yml
+rate_limit_signaling:
+  headers: []
+  status_on_exhaustion: null
+  detail: >-
+    No rate-limit headers and no 429 response are declared anywhere in the contract, and no limits
+    are published in the docs. An agent has no runtime signal at all.
+  cross_link: rate-limits/ocean-health-systems-rate-limits.yml
+dry_run_mode:
+  grade: documented
+  detail: >-
+    A real pre-flight exists for the highest-risk write. POST /templates/validation-report takes an
+    OET and returns CKM's own validation report — "Validates if all required resources are present
+    and used in the latest revision on the trunk" — WITHOUT importing anything, and the import and
+    update operations explicitly recommend calling it first. There is no equivalent pre-flight for
+    archetype import, and no dry-run for deletes.
+  operations:
+    - operationId: getValidationReportForTemplate
+      path: /templates/validation-report
+      method: post
+reversibility:
+  grade: none
+  na: false
+  detail: >-
+    The API has a write surface (9 write operations), and the provider's own documentation states
+    that its destructive operations CANNOT be taken back. No cancel, undo, restore, revert or
+    trash operation exists anywhere in the 48-operation contract, and no retention window is
+    published. This is recorded as an absence measured from the contract, not as a gap in our
+    reading of it.
+  reversal_paths: []
+  irreversible_operations:
+    - operationId: deleteArchetype
+      path: /archetypes/{cid-archetype}
+      method: delete
+      stated: >-
+        "PERMANENTLY and IRREVOCABLY DELETES the specified archetype in CKM. For a trunk archetype,
+        this will also PERMANENTLY DESTROY EVERYTHING that depends on this resource, including its
+        branches, review rounds, individual reviews, discussion comments, documents from the
+        resource's resource centre, tasks from its to do list, change requests, etc."
+      source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+      guard: >-
+        Two opt-in booleans act as a confirmation gate rather than a reversal — delete-if-trunk and
+        delete-if-published must be supplied for the destructive cases.
+    - operationId: deleteTemplate
+      path: /templates/{cid-template}
+      method: delete
+      stated: >-
+        "PERMANENTLY and IRREVOCABLY DELETES the specified template in CKM. For a trunk template,
+        this will also PERMANENTLY DESTROY EVERYTHING that depends on this resource..."
+      source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+      guard: delete-if-trunk / delete-if-published
+  recovery:
+    mechanism: asset-version-history
+    confidence: medium
+    method: derived
+    detail: >-
+      Not a reversal operation, and not claimed as one. CKM retains prior asset versions of a
+      resource, and reads accept an asset-version query parameter, so a client that has NOT deleted
+      the resource can fetch an earlier revision (GET /archetypes/{cid}/adl?asset-version=N) and
+      re-submit it through updateArchetypeOnTrunk to restore earlier content. That path is derived
+      from the parameter surface, is limited to unpublished trunk resources (the spec states only
+      archetypes that have NOT been published can be updated via the API), and no window is stated
+      by the provider — so no window is asserted here.
+constraints:
+  - Only unpublished trunk archetypes can be updated through the API; published archetypes and forks require the CKM web UI.
+  - An update must not change the copyright or original namespace, and must not be byte-identical to the current revision.
+  - Branch resources have no status; several 403 responses are this state condition rather than a permissions failure.

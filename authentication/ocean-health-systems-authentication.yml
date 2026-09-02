@@ -1,0 +1,25 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: sessionid
+  type: apiKey
+  in: header
+  parameter: JSESSIONID
+  description: Once the session id is known, it can be used for authentication until expired.
+    The provided session id is used (and validated) on making an actual request.
+  sources:
+  - openapi/ocean-health-systems-ckm-rest-api-openapi.json
+- name: basicAuth
+  type: http
+  scheme: basic
+  description: Basic authentification using the CKM username and password. The provided credentials
+    are used (and validated) on making an actual request.
+  sources:
+  - openapi/ocean-health-systems-ckm-rest-api-openapi.json

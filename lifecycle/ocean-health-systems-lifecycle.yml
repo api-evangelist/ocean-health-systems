@@ -1,0 +1,55 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases (200),
+  https://oceanhealthsystems.com/ckm-info (200), and
+  openapi/ocean-health-systems-ckm-rest-api-openapi.json
+versioning:
+  api_version: v1
+  api_version_scheme: uri-path
+  spec_version: 1.6.0
+  application_version: 1.21.0
+  application_version_source: 'https://ckm.openehr.org/ckm/ asset query string (css/ckm.css?v=1.21.0), observed 2026-09-02'
+  detail: >-
+    Two version tracks. The REST contract is pinned at /ckm/rest/v1 and its info.version is 1.6.0.
+    The CKM application itself versions separately (1.21.0 on the reference instance) and is what
+    Ocean's release notes describe. CKM is licensed software deployed per instance, so an API
+    consumer's available surface depends on which CKM release their instance is running.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations: []
+  detail: >-
+    No deprecation or sunset policy is published, no RFC 8594 Sunset or Deprecation header is
+    declared, and not one of the 48 operations carries deprecated:true. Recorded as an absence — no
+    Deprecation pointer is wired into apis.yml.
+status_page:
+  published: false
+  probes:
+    - url: https://status.oceanhealthsystems.com/
+      status: '<no response> (DNS does not resolve)'
+    - url: https://oceanhealthsystems.statuspage.io/
+      status: 200
+      verdict: false-positive
+      note: >-
+        Redirects to https://www.atlassian.com/software/statuspage. A control probe of
+        https://zzzznotarealcompany999.statuspage.io/ redirects to exactly the same marketing page,
+        so this is Statuspage's catch-all, not an Ocean status page.
+    - url: https://status.ckm.openehr.org/
+      status: '<no response> (DNS does not resolve)'
+  detail: No status page exists. No StatusPage pointer is wired into apis.yml.
+sla:
+  published: false
+  detail: >-
+    No uptime or support SLA is published on the public site. CKM is sold as licensed/hosted
+    software through a sales conversation, and support runs through the Ocean service desk at
+    https://oceanehr.atlassian.net/servicedesk/customer/portal/15 (200).
+support:
+  channel: service-desk
+  url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+  contact_from_contract: ckm@oceaninformatics.com
+release_cadence:
+  observed: 'roughly one to two minor CKM releases per year since 1.16 (2020-era) through 1.21.0'
+  source: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  cross_link: changelog/ocean-health-systems-changelog.yml

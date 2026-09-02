@@ -1,0 +1,81 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the CKM REST API
+  version: 1.0.0
+extends: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+x-provenance:
+  generated: '2026-09-02'
+  method: generated
+  source: >-
+    Derived from the verbatim Swagger 2.0 contract at
+    https://ckm.openehr.org/ckm/rest/v1/swagger.json plus the artifacts in this repo. The original
+    spec is never mutated; everything below is our addition and is marked as such.
+actions:
+  - target: $.info
+    description: >-
+      Record the servers the contract omits. The published Swagger 2.0 document declares a basePath
+      (/ckm/rest/v1) but no host and no schemes, because CKM is licensed software deployed per
+      customer — the host is whichever CKM instance you hold credentials for.
+    update:
+      x-api-evangelist-base-url-note: >-
+        No host is declared in the contract. The reference public deployment is
+        https://ckm.openehr.org/ckm/rest/v1 (openEHR International's instance of Ocean's CKM);
+        arketyper.no serves the identical contract at https://arketyper.no/ckm/rest/v1. Substitute
+        your own instance host.
+      x-api-evangelist-instance-hosts:
+        - https://ckm.openehr.org/ckm/rest/v1
+        - https://arketyper.no/ckm/rest/v1
+  - target: $.info
+    description: Cross-link the derived artifacts so an agent reading the spec can find the semantics that are not in it.
+    update:
+      x-api-evangelist-artifacts:
+        conventions: conventions/ocean-health-systems-conventions.yml
+        errors: errors/ocean-health-systems-problem-types.yml
+        data_model: data-model/ocean-health-systems-data-model.yml
+        authentication: authentication/ocean-health-systems-authentication.yml
+        lifecycle: lifecycle/ocean-health-systems-lifecycle.yml
+        conformance: conformance/ocean-health-systems-conformance.yml
+        skills: skills/_index.yml
+  - target: $.info
+    description: Flag the gaps a consumer will hit, measured against the contract as published.
+    update:
+      x-api-evangelist-gaps:
+        error_schema: 'None. 104 declared responses, no error schema, no application/problem+json.'
+        rate_limits: 'None declared. No 429, no RateLimit headers.'
+        idempotency: 'No idempotency key. Conditional requests (if-match / if-unmodified-since, 412) only.'
+        pagination_totals: 'offset and size are declared; no total count and no next link, so page depth is unknowable.'
+        examples: 'Schema-level examples exist on CkmResource fields; no request or response examples on any operation.'
+  - target: $.paths['/archetypes/{cid-archetype}']['delete']
+    description: >-
+      Mark the archetype delete as irreversible for agent consumption. Ocean states this in prose in
+      the operation description; this makes it machine-readable.
+    update:
+      x-api-evangelist-reversibility:
+        reversible: false
+        reversal_operation: null
+        window: null
+        blast_radius: >-
+          For a trunk archetype, also destroys branches, review rounds, individual reviews,
+          discussion comments, resource-centre documents, to-do tasks and change requests.
+        confirmation_required: true
+        source: "the operation description in Ocean's own published contract"
+  - target: $.paths['/templates/{cid-template}']['delete']
+    description: Mark the template delete as irreversible for agent consumption.
+    update:
+      x-api-evangelist-reversibility:
+        reversible: false
+        reversal_operation: null
+        window: null
+        blast_radius: >-
+          For a trunk template, also destroys branches, review rounds, individual reviews,
+          discussion comments, resource-centre documents, to-do tasks and change requests.
+        confirmation_required: true
+        source: "the operation description in Ocean's own published contract"
+  - target: $.paths['/templates/validation-report']['post']
+    description: Label the validation report as the dry-run for template import and update.
+    update:
+      x-api-evangelist-dry-run:
+        dry_run_for:
+          - importTemplate
+          - updateTemplateOnTrunk
+        mutates: false

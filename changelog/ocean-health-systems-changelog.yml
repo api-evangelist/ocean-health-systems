@@ -1,0 +1,77 @@
+generated: '2026-09-02'
+method: searched
+source: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+secondary_source: https://oceanhealthsystems.com/ckm-info
+scheme: semver
+subject: >-
+  Clinical Knowledge Manager (the application). The CKM REST API's own contract version (1.6.0) is
+  not separately changelogged; API changes ride the application release.
+current_version: 1.21.0
+note: >-
+  The canonical, dated release index is hosted on the openEHR Confluence (space "healthmod",
+  maintained by Ocean's CKM lead Sebastian Garde) rather than on oceanhealthsystems.com. It lists
+  every CKM release from 1.0.2 through 1.21.0 with per-release notes pages, and was last updated
+  23-Feb-2026. The index itself does not print per-release dates; the dates below are the
+  publication dates of Ocean's own announcement posts, taken from the site sitemap, and are marked
+  announced: true to distinguish them from a vendor-stated release date.
+entries:
+  - version: 1.21.0
+    date: '2025-12-27'
+    announced: true
+    breaking: unknown
+    title: 'Strengthening CKM: Performance, Governance and Smarter Clinical Modelling'
+    url: https://oceanhealthsystems.com/strengthening-ckm-performance-governance-and-smarter-clinical-modelling/
+    highlights:
+      - Over 190 improvements across functionality, stability and user experience (Ocean's own count).
+  - version: 1.20.1
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.20.1
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  - version: 1.20.0
+    date: '2024-06-19'
+    announced: true
+    breaking: unknown
+    title: 'CKM 1.20.0 — Modernising the development and governance of clinical content models'
+    url: https://oceanhealthsystems.com/ckm-1-20-0-modernising-the-development-and-governance-of-clinical-content-models/
+  - version: 1.19.1
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.19.1
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  - version: 1.19.0
+    date: '2023-09-05'
+    announced: true
+    breaking: unknown
+    title: 'Clinical Knowledge Manager, and then some.'
+    url: https://oceanhealthsystems.com/clinical-knowledge-manager-and-then-some/
+    highlights:
+      - 155 issues addressed (Ocean's own count).
+  - version: 1.18.0
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.18.0
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  - version: 1.17.0
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.17.0
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  - version: 1.16.1
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.16.1
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+  - version: 1.16.0
+    date: null
+    announced: false
+    breaking: unknown
+    title: CKM Release 1.16.0
+    url: https://openehr.atlassian.net/wiki/spaces/healthmod/pages/2949224/CKM+Releases
+older:
+  detail: 'Releases 1.15.0 back to 1.0.2 are indexed on the same Confluence page; not enumerated here (recent window only).'

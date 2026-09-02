@@ -1,0 +1,124 @@
+generated: '2026-09-02'
+method: derived
+source: >-
+  openapi/ocean-health-systems-ckm-rest-api-openapi.json plus
+  https://oceanhealthsystems.com/products/ckm/ and https://oceanhealthsystems.com/why-openehr/
+  (fetched 2026-09-02)
+summary:
+  asserted: 4
+  refuted: 6
+conformance:
+  - id: openehr
+    name: openEHR (Archetype Definition Language, Operational Templates, two-level modelling)
+    conforms: true
+    domain_standard: true
+    evidence:
+      - type: contract
+        location: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+        detail: >-
+          The contract's own operations are openEHR artefact operations. GET
+          /archetypes/{cid-archetype}/adl returns the archetype in openEHR ADL; GET
+          /templates/{cid-template}/opt returns the openEHR Operational Template; GET
+          /templates/{cid-template}/oet returns the openEHR template (OET) form;
+          CkmResource.resourceType enumerates ARCHETYPE / TEMPLATE / TERMSET / RELEASESET. The
+          spec's externalDocs points at http://www.openehr.org. This is the domain standard for
+          clinical-content modelling and the contract declares it in its paths and schemas, not only
+          in marketing prose.
+      - type: docs
+        location: https://oceanhealthsystems.com/why-openehr/
+        status: 200
+  - id: semver
+    name: Semantic Versioning of clinical content assets
+    conforms: true
+    evidence:
+      - type: contract
+        location: 'definitions.CkmResource.revision / revisionLatest / revisionLatestPublished'
+        detail: >-
+          Asset revisions are carried as SemVer strings with examples "1.0.0", "1.1.1-alpha" and
+          "1.1.0", alongside an integer asset version. Content governance is versioned in the
+          contract, not only in the UI.
+  - id: http-conditional-requests
+    name: 'RFC 9110 conditional requests (If-Match / If-Unmodified-Since, 412)'
+    conforms: true
+    evidence:
+      - type: contract
+        location: 'PUT /archetypes/{cid-archetype}, PUT /templates/{cid-template}, PUT /templates/{cid-template}/status'
+        detail: >-
+          All three write-update operations accept if-match and if-unmodified-since headers and
+          declare a 412 "Precondition failed" response, with MD5 hash endpoints
+          (/archetypes/{cid}/hash, /templates/{cid}/hash) published so a client can obtain the
+          validator. Optimistic concurrency control is a first-class part of the contract.
+  - id: http-basic-auth
+    name: 'RFC 7617 HTTP Basic authentication'
+    conforms: true
+    evidence:
+      - type: contract
+        location: securityDefinitions.basicAuth
+        detail: >-
+          type "basic" with the description "Basic authentification using the CKM username and
+          password", applied per-operation alongside a JSESSIONID apiKey scheme.
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: false
+    evidence:
+      - type: contract
+        location: securityDefinitions
+        detail: >-
+          Only basicAuth (HTTP Basic) and sessionid (JSESSIONID header) are declared. No oauth2 or
+          openIdConnect scheme exists, and /.well-known/oauth-authorization-server returns 404 on
+          every host. There is therefore no scope surface, and scopes/ is deliberately not written.
+  - id: oidc
+    name: OpenID Connect
+    conforms: false
+    evidence:
+      - type: probe
+        location: https://ckm.openehr.org/.well-known/openid-configuration
+        status: 404
+  - id: rfc9457
+    name: 'RFC 9457 Problem Details for HTTP APIs'
+    conforms: false
+    evidence:
+      - type: contract
+        location: 'paths[*].responses[4xx]'
+        detail: >-
+          104 responses are declared across 48 operations, none with an application/problem+json
+          media type and none with an error schema. Errors are the status code plus a
+          human-readable description only.
+  - id: fhir
+    name: HL7 FHIR
+    conforms: false
+    evidence:
+      - type: docs
+        location: https://oceanhealthsystems.com/products/ckm/
+        status: 200
+        detail: >-
+          The CKM product page advertises "mappings to FHIR and OMOP". That is a content-mapping
+          capability of the modelling tool, not a FHIR API surface — the published REST contract
+          declares no FHIR resource, no CapabilityStatement and no FHIR media type. Recorded as
+          conforms:false so a prose claim is not read as a callable FHIR endpoint.
+  - id: scim
+    name: 'SCIM (RFC 7643/7644)'
+    conforms: false
+    evidence:
+      - type: contract
+        location: 'POST /users, definitions.NewUser'
+        detail: >-
+          User provisioning exists (POST /users creates a CKM user) but uses a bespoke NewUser
+          schema with no SCIM schema URN and no /Users SCIM endpoint shape.
+  - id: pagination
+    name: Declared pagination
+    conforms: true
+    evidence:
+      - type: contract
+        location: 'GET /archetypes, GET /templates, GET /change-requests, GET /resource-proposals'
+        detail: >-
+          offset and size integer query parameters are declared on the list operations. The contract
+          does not declare a total-count response header or a next-link, so a client can page but
+          cannot know how many pages remain.
+compliance_programs: []
+compliance_note: >-
+  No certification, audit report or trust centre is published. security.txt, a vulnerability
+  disclosure page and a trust page were all probed on 2026-09-02 and none exist, so NO Compliance
+  pointer is wired into apis.yml. The company's published legal surface is an Australian Privacy Act
+  1988 / NSW HRIPA privacy policy (https://oceanhealthsystems.com/privacy-policy/) and an Acceptable
+  Use Policy — regulatory statements, not third-party attestations.

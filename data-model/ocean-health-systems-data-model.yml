@@ -1,0 +1,129 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+summary:
+  entities: 9
+  relationships: 12
+  identifier_scheme: >-
+    CKM citeable identifier (cid) — a dotted numeric string, example "1013.1.130". Every governed
+    entity is addressed by cid; archetypes and templates additionally carry the openEHR-level
+    identifier (archetype id / template id) and are crossed over with the two
+    /citeable-identifier/{id} resolver operations.
+entities:
+  - name: CkmResource
+    description: >-
+      The governed artefact — the union type over archetypes, templates, term sets and release sets.
+      Carries the governance state that CKM exists to manage: status, asset version, SemVer revision
+      (current / latest / latest-published), creation and modification times, owning project, and
+      branch name when it is not on the trunk.
+    key: cid
+    enums:
+      resourceType: [ARCHETYPE, TEMPLATE, TERMSET, RELEASESET]
+      templateType: [NORMAL, ORDER_ITEM, ORDER_SET, KNOWLEDGE_TOPIC]
+    fields_of_note: [cid, versionAsset, versionAssetLatest, versionAssetLatestPublished, revision, revisionLatest, revisionLatestPublished, status, uid, buildUid, branchName, cidProject, projectName]
+  - name: Archetype
+    description: >-
+      A CkmResource with resourceType ARCHETYPE. Not a separate schema — the API projects it through
+      CkmResource and serves its content in ADL, XML and mindmap representations.
+    key: cid
+    representations: [adl, xml, mindmap]
+  - name: Template
+    description: >-
+      A CkmResource with resourceType TEMPLATE, served as OET (authoring form) and OPT (operational
+      template — the artefact a CDR consumes). Templates compose archetypes and may embed other
+      templates.
+    key: cid
+    representations: [oet, opt, file-set-url]
+  - name: Project
+    description: >-
+      The ownership and permission boundary for resources. Typed PROJECT or INCUBATOR, flagged
+      public/private, may be marked forOrderTemplates, and belongs to a subdomain.
+    key: cid
+    fields_of_note: [cid, name, projectURL, cidSubdomain, subdomainName, public, projectType, remoteSubdomain, forOrderTemplates]
+  - name: Subdomain
+    description: The top-level partition of a CKM instance; groups projects.
+    key: cid
+  - name: ChangeRequest
+    description: A governance request raised against a resource and tracked to resolution.
+    key: cid
+  - name: ResourceProposal
+    description: A proposal for a new or changed resource, awaiting triage into a project.
+    key: cid
+  - name: User
+    description: >-
+      A CKM account. NewUser is the write-side shape (POST /users); User is the read-side shape
+      returned by GET /sessions. Usernames are constrained to firstname.lastname.
+    key: username
+  - name: TemplateValidationItem
+    description: >-
+      One finding from CKM's template validation report — the response body of
+      POST /templates/validation-report, the API's dry-run surface.
+relationships:
+  - from: CkmResource
+    to: Project
+    type: belongs_to
+    via: cidProject
+    evidence: 'definitions.CkmResource.cidProject; GET /archetypes/{cid-archetype}/project; GET /templates/{cid-template}/project'
+  - from: Project
+    to: Subdomain
+    type: belongs_to
+    via: cidSubdomain
+    evidence: definitions.Project.cidSubdomain
+  - from: Subdomain
+    to: Project
+    type: has_many
+    via: cid-subdomain
+    evidence: 'GET /subdomains/{cid-subdomain}/projects'
+  - from: Archetype
+    to: Archetype
+    type: has_one
+    via: parent
+    evidence: 'GET /archetypes/{cid-archetype}/parent — the specialisation parent, if any'
+  - from: Template
+    to: Archetype
+    type: has_many
+    via: required-archetypes
+    evidence: 'GET /templates/{cid-template}/required-archetypes'
+  - from: Template
+    to: Template
+    type: has_many
+    via: embedded-templates
+    evidence: 'GET /templates/{cid-template}/embedded-templates'
+  - from: CkmResource
+    to: Status
+    type: has_many
+    via: asset-version
+    evidence: 'GET /resources/{cid-resource}/status/{asset-version}; GET /archetypes/{cid-archetype}/status/{asset-version}; GET /templates/{cid-template}/status/{asset-version} — status is versioned per asset revision'
+  - from: ChangeRequest
+    to: CkmResource
+    type: belongs_to
+    via: versionAsset/cid
+    evidence: 'definitions.ChangeRequest; GET /change-requests?cid-resource='
+  - from: ResourceProposal
+    to: Project
+    type: belongs_to
+    via: cid-project
+    evidence: 'GET /resource-proposals?cid-project='
+  - from: Template
+    to: TemplateValidationItem
+    type: has_many
+    via: validation-report
+    evidence: 'POST /templates/validation-report'
+  - from: Archetype
+    to: CiteableIdentifier
+    type: has_one
+    via: archetype-id
+    evidence: 'GET /archetypes/citeable-identifier/{archetype-id}'
+  - from: Template
+    to: CiteableIdentifier
+    type: has_one
+    via: template-id
+    evidence: 'GET /templates/citeable-identifier/{template-id}'
+notes:
+  - >-
+    The model is deliberately governance-shaped rather than clinical-data-shaped. CKM holds the
+    MODELS (archetypes, templates, term sets, release sets) and their review lifecycle; it holds no
+    patient record. Clinical data lives in an openEHR CDR that consumes the OPT this API serves.
+  - >-
+    Publisher namespace is an instance-level property, readable at GET /resources/publisher-namespace
+    — useful for confirming which organisation's CKM deployment you are talking to.

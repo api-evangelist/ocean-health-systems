@@ -1,18 +1,111 @@
 aid: ocean-health-systems
 name: Ocean Health Systems
-description: 'Ocean Health Systems is a company surfaced via the API Evangelist harvest backlog (source:
-  openehr-coalition) and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Ocean Health Systems (legally Ocean Informatics Pty Ltd, founded 1998, with offices in Bundall QLD,
+  Chatswood NSW and London) is the Australian clinical-informatics company whose founders
+  commercialised the first openEHR clinical data repository and built Clinical Knowledge Manager
+  (CKM) — the repository and collaborative governance environment in which openEHR archetypes,
+  templates, terminology subsets and release sets are authored, peer reviewed, semantically
+  versioned, approved and published, with terminology binding to SNOMED CT and LOINC and mappings
+  out to FHIR and OMOP. CKM runs the international openEHR community instance as well as national
+  and vendor deployments, and ships a documented Swagger 2.0 REST API (48 operations) for
+  discovering models and pulling their ADL, XML, OET and Operational Template representations.
+  Ocean also builds Multiprac Immunize and Multiprac Surveillance for immunisation and infection
+  prevention, and publishes the free Archetype Editor and Template Designer authoring tools.
+image: https://oceanhealthsystems.com/wp-content/uploads/2023/09/Asset-33@300x-e1695112566701.png
 url: https://raw.githubusercontent.com/api-evangelist/ocean-health-systems/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:openehr-coalition
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-09-02'
 modified: '2026-09-02'
 tags:
-- Company
-apis: []
+- Health
+- Healthcare
+- Electronic Health Records
+- openEHR
+- Clinical Data
+- Clinical Knowledge Management
+- Interoperability
+- Health Informatics
+- Terminology
+- Archetypes
+- Infection Prevention
+- Immunisation
+tags_raw:
+- health
+- healthcare
+- electronic-health-records
+- openehr
+- clinical-data
+- clinical-knowledge-management
+- interoperability
+- health-informatics
+- terminology
+- archetypes
+- infection-prevention
+- immunisation
+apis:
+- name: CKM REST API
+  description: >-
+    REST API for the Clinical Knowledge Manager — 48 operations across 39 paths covering archetypes
+    (list, search, ADL/XML/mindmap retrieval, specialisation parent, status by asset version, MD5
+    hash, import, trunk update, delete), templates (list, search, OET/OPT retrieval, file-set URL,
+    required archetypes, embedded templates, validation report, status read and update, import,
+    trunk update, delete), the archetype/template union "resources" view with the instance publisher
+    namespace, projects and subdomains, change requests and resource proposals, and user and session
+    management. Authentication is HTTP Basic or a JSESSIONID session header; public projects on a
+    public instance read anonymously.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  x-base-url-note: >-
+    The published Swagger 2.0 contract declares basePath /ckm/rest/v1 and NO host, because CKM is
+    licensed software deployed per organisation — the host is whichever CKM instance the caller has
+    access to. The baseURL recorded here is the public reference deployment, openEHR
+    International's instance of Ocean's CKM. The identical contract is served at
+    https://arketyper.no/ckm/rest/v1, which confirms the contract belongs to Ocean's software rather
+    than to any single host.
+  x-ownership: >-
+    Ownership verified 2026-09-02 against the spec's own self-description, not its fetch URL:
+    info.title "CKM REST API", info.contact.name "CKM Support", info.contact.email
+    ckm@oceaninformatics.com, and info.contact.url the Ocean service desk at
+    https://oceanehr.atlassian.net/servicedesk/customer/portal/15. oceaninformatics.com and
+    oceanehr.com both 301 to oceanhealthsystems.com, so the contact domains are Ocean's own.
+  tags:
+  - openEHR
+  - Clinical Knowledge Management
+  - Clinical Data
+  - Archetypes
+  - Terminology
+  - Health Informatics
+  - Interoperability
+  tags_raw:
+  - openehr
+  - clinical-knowledge-management
+  - clinical-data
+  - archetypes
+  - terminology
+  - health-informatics
+  - interoperability
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Overlay
+    url: overlays/ocean-health-systems-ckm-rest-api-overlay.yaml
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +113,96 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: http://www.oceanhealthsystems.com/
+  url: https://oceanhealthsystems.com/
+- type: Documentation
+  url: https://ckm.openehr.org/ckm/rest-doc/
+- type: APIReference
+  url: https://ckm.openehr.org/ckm/rest-doc/
+- type: Support
+  url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+- type: Blog
+  url: https://oceanhealthsystems.com/media/
+- type: BlogRSS
+  url: https://oceanhealthsystems.com/feed/
+- type: GitHubOrganization
+  url: https://github.com/OceanHealthSystems
+- type: TermsOfService
+  url: https://oceanhealthsystems.com/fair-use-policy/
+- type: PrivacyPolicy
+  url: https://oceanhealthsystems.com/privacy-policy/
+- type: OpenAPI
+  url: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+- type: Overlay
+  url: overlays/ocean-health-systems-ckm-rest-api-overlay.yaml
+- type: Authentication
+  url: authentication/ocean-health-systems-authentication.yml
+- type: Conventions
+  url: conventions/ocean-health-systems-conventions.yml
+- type: ErrorCatalog
+  url: errors/ocean-health-systems-problem-types.yml
+- type: DataModel
+  url: data-model/ocean-health-systems-data-model.yml
+- type: Conformance
+  url: conformance/ocean-health-systems-conformance.yml
+- type: Lifecycle
+  url: lifecycle/ocean-health-systems-lifecycle.yml
+- type: ChangeLog
+  url: changelog/ocean-health-systems-changelog.yml
+- type: Packages
+  url: packages/ocean-health-systems-packages.yml
+- type: Plans
+  url: plans/ocean-health-systems-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/ocean-health-systems-rate-limits.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/ocean-health-systems-llms.txt
+- type: DomainSecurity
+  url: security/ocean-health-systems-domain-security.yml
+x-pointers-omitted:
+  note: >-
+    Deliberate absences, each measured on 2026-09-02. Recording them here so a later round does not
+    re-litigate them, and so no pointer asserts a surface Ocean does not serve.
+  omitted:
+  - type: WellKnown
+    reason: 'every named /.well-known/ path returns 404 on all three hosts; control probe also 404 (see well-known/)'
+  - type: SecurityTxt
+    reason: '/.well-known/security.txt 404 on oceanhealthsystems.com, www., and ckm.openehr.org'
+  - type: MCPServer
+    reason: 'no first-party MCP server exists; mcp/ holds a DERIVED candidate with deployment.mode none'
+  - type: AgentCard
+    reason: '/.well-known/agent-card.json and /.well-known/agent.json 404 on every host; nothing written to a2a/'
+  - type: SDKs
+    reason: 'no first-party client library in npm, PyPI, Maven Central or NuGet (see packages/)'
+  - type: Idempotency
+    reason: 'no idempotency key; only conditional requests (if-match / if-unmodified-since, 412)'
+  - type: StatusPage
+    reason: 'no status page; oceanhealthsystems.statuspage.io is Statuspage''s catch-all, confirmed against a control probe'
+  - type: Deprecation
+    reason: 'no deprecation or sunset policy, and zero operations marked deprecated in the contract'
+  - type: Security
+    reason: 'no vulnerability disclosure policy, security.txt or bug bounty found'
+  - type: Compliance
+    reason: 'no certifications or audit attestations published; no trust centre'
+  - type: Pricing
+    reason: 'no pricing page anywhere in the site sitemap; every product routes to a demo form'
+  - type: SignUp
+    reason: 'no self-serve sign-up; enterprise sales gate only'
+  - type: Postman
+    reason: 'Postman public search returned zero collections or workspaces for CKM/openEHR'
+  - type: AsyncAPI
+    reason: 'no event, streaming or webhook surface in the contract or the docs'
+  - type: Webhooks
+    reason: 'no webhook catalogue published'
+  - type: Protobuf
+    reason: 'no .proto published'
+  - type: WSDL
+    reason: '?wsdl probes returned the HTML app shell or 410 Gone; no SOAP contract served'
+  - type: OAuthScopes
+    reason: 'no oauth2 or openIdConnect scheme in the contract, so there is no scope surface'
+x-enrichment:
+  date: '2026-09-02'
+  status: enriched
+  artifacts_added: 21
+  pass: local-v1

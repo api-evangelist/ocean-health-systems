@@ -1,0 +1,110 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+status: candidate
+name: Ocean Health Systems CKM (candidate MCP server)
+description: >-
+  Candidate MCP tool surface derived from the 48 operations of the CKM REST API 1.6.0. Ocean Health
+  Systems does not publish an MCP server of its own — this is a proposal, not a discovery.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+search_record:
+  searched: '2026-09-02'
+  first_party_server: false
+  probes:
+    - url: https://oceanhealthsystems.com/llms.txt
+      status: 404
+    - url: https://ckm.openehr.org/llms.txt
+      status: 404
+    - url: https://oceanhealthsystems.com/.well-known/ai-plugin.json
+      status: 404
+    - url: https://ckm.openehr.org/.well-known/ai-plugin.json
+      status: 404
+  third_party_servers:
+    - name: openehr-assistant-mcp
+      url: https://github.com/Cadasto/openehr-assistant-mcp
+      first_party: false
+      note: >-
+        Community MCP server (Cadasto) that wraps CKM archetype and template discovery over the same
+        public CKM REST API. Recorded because it is evidence the CKM API is already being consumed
+        by agents, NOT as an Ocean surface — it is not published, endorsed or operated by Ocean
+        Health Systems, so no MCPServer pointer is wired into apis.yml.
+    - name: openehr-mcp
+      url: https://glama.ai/mcp/servers/@ajinkyasabale-github/openehr-mcp
+      first_party: false
+      note: Community openEHR MCP server; targets openEHR CDRs, not Ocean's CKM specifically.
+candidate_tools:
+  - tool: ckm_list_archetypes
+    rest: [listArchetypes]
+    description: Search and list archetypes in a CKM instance by project, subdomain, status, class or free text.
+  - tool: ckm_get_archetype
+    rest: [getArchetypeAsCKMResource]
+    description: Get the main metadata of one archetype by citeable identifier.
+  - tool: ckm_get_archetype_adl
+    rest: [getArchetypeInADL]
+    description: Fetch an archetype in openEHR ADL form.
+  - tool: ckm_get_archetype_xml
+    rest: [getArchetypeInXML]
+    description: Fetch an archetype in openEHR XML form.
+  - tool: ckm_get_archetype_status
+    rest: [getCurrentArchetypeStatus, getArchetypeStatusAtVersion]
+    description: Read the governance status of an archetype, current or at a given asset version.
+  - tool: ckm_resolve_archetype_id
+    rest: [getCiteableIdentifierForArchetypeId]
+    description: Resolve an openEHR archetype id to its CKM citeable identifier.
+  - tool: ckm_list_templates
+    rest: [listTemplates]
+    description: Search and list templates in a CKM instance.
+  - tool: ckm_get_template
+    rest: [getTemplateAsCKMResource]
+    description: Get the main metadata of one template by citeable identifier.
+  - tool: ckm_get_template_opt
+    rest: [getTemplateOPT]
+    description: Fetch the operational template (OPT) for a template — the artifact a CDR consumes.
+  - tool: ckm_get_template_oet
+    rest: [getTemplateOET]
+    description: Fetch a template in OET form.
+  - tool: ckm_template_dependencies
+    rest: [listRequiredArchetypesForTemplate, listEmbeddedTemplates]
+    description: List the archetypes and embedded templates a template depends on.
+  - tool: ckm_validate_template
+    rest: [getValidationReportForTemplate]
+    description: Pre-flight a template OET against CKM's validation report before importing it.
+  - tool: ckm_list_projects
+    rest: [listProjects, getProject, listProjectsOfSubdomain]
+    description: List and read CKM projects and incubators, optionally scoped to a subdomain.
+  - tool: ckm_list_subdomains
+    rest: [listSubdomains, getSubdomain]
+    description: List and read the subdomains of a CKM instance.
+  - tool: ckm_list_change_requests
+    rest: [listChangeRequests, getChangeRequest]
+    description: List and read governance change requests.
+  - tool: ckm_list_resource_proposals
+    rest: [listResourceProposals, getResourceProposal]
+    description: List and read resource proposals awaiting triage.
+  - tool: ckm_whoami
+    rest: [getCurrentUser]
+    description: Read the identity and permissions of the authenticated CKM session.
+write_operations_excluded:
+  - importArchetype
+  - updateArchetypeOnTrunk
+  - deleteArchetype
+  - importTemplate
+  - updateTemplateOnTrunk
+  - updateTemplateStatus
+  - deleteTemplate
+  - createUser
+  - signIn
+  - signOut
+write_exclusion_reason: >-
+  deleteArchetype and deleteTemplate are documented by Ocean as PERMANENTLY and IRREVOCABLY
+  destroying the resource and everything that depends on it (branches, review rounds, reviews,
+  discussion comments, change requests). They have no reversal operation. A derived candidate tool
+  set deliberately stops at the read surface plus the validation pre-flight; the write operations
+  are listed here so they are not silently dropped, but they should not be exposed to an agent
+  without an explicit human confirmation step.
