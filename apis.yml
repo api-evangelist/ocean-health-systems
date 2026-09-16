@@ -31,7 +31,7 @@ tags:
 - Terminology
 - Archetypes
 - Infection Prevention
-- Immunisation
+- immunisation
 tags_raw:
 - health
 - healthcare
@@ -46,56 +46,215 @@ tags_raw:
 - infection-prevention
 - immunisation
 apis:
-- name: CKM REST API
-  description: >-
-    REST API for the Clinical Knowledge Manager — 48 operations across 39 paths covering archetypes
-    (list, search, ADL/XML/mindmap retrieval, specialisation parent, status by asset version, MD5
-    hash, import, trunk update, delete), templates (list, search, OET/OPT retrieval, file-set URL,
-    required archetypes, embedded templates, validation report, status read and update, import,
-    trunk update, delete), the archetype/template union "resources" view with the instance publisher
-    namespace, projects and subdomains, change requests and resource proposals, and user and session
-    management. Authentication is HTTP Basic or a JSESSIONID session header; public projects on a
-    public instance read anonymously.
+- aid: ocean-health-systems:ocean-health-systems-archetypes-api
+  name: Ocean Health Systems Archetypes API
+  description: Endpoint for archetype-related services, including listing and getting archetypes.
   humanURL: https://ckm.openehr.org/ckm/rest-doc/
   baseURL: https://ckm.openehr.org/ckm/rest/v1
-  x-base-url-note: >-
-    The published Swagger 2.0 contract declares basePath /ckm/rest/v1 and NO host, because CKM is
-    licensed software deployed per organisation — the host is whichever CKM instance the caller has
-    access to. The baseURL recorded here is the public reference deployment, openEHR
-    International's instance of Ocean's CKM. The identical contract is served at
-    https://arketyper.no/ckm/rest/v1, which confirms the contract belongs to Ocean's software rather
-    than to any single host.
-  x-ownership: >-
-    Ownership verified 2026-09-02 against the spec's own self-description, not its fetch URL:
-    info.title "CKM REST API", info.contact.name "CKM Support", info.contact.email
-    ckm@oceaninformatics.com, and info.contact.url the Ocean service desk at
-    https://oceanehr.atlassian.net/servicedesk/customer/portal/15. oceaninformatics.com and
-    oceanehr.com both 301 to oceanhealthsystems.com, so the contact domains are Ocean's own.
   tags:
-  - openEHR
-  - Clinical Knowledge Management
-  - Clinical Data
   - Archetypes
-  - Terminology
-  - Health Informatics
-  - Interoperability
-  tags_raw:
-  - openehr
-  - clinical-knowledge-management
-  - clinical-data
-  - archetypes
-  - terminology
-  - health-informatics
-  - interoperability
   properties:
   - type: OpenAPI
-    url: openapi/ocean-health-systems-ckm-rest-api-openapi.json
+    url: openapi/ocean-health-systems-archetypes-api-openapi.yml
   - type: Documentation
     url: https://ckm.openehr.org/ckm/rest-doc/
   - type: APIReference
     url: https://ckm.openehr.org/ckm/rest-doc/
-  - type: Overlay
-    url: overlays/ocean-health-systems-ckm-rest-api-overlay.yaml
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-change-requests-api
+  name: Ocean Health Systems Change Requests API
+  description: >-
+    Endpoint for change request-related services, including listing and getting change requests.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Change Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-change-requests-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-projects-api
+  name: Ocean Health Systems Projects API
+  description: Endpoint for project-related services, including listing and getting projects.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-projects-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-resource-proposals-api
+  name: Ocean Health Systems Resource Proposals API
+  description: >-
+    Endpoint for resource proposal-related services, including listing and getting resource proposals.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Resource Proposals
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-resource-proposals-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-resources-api
+  name: Ocean Health Systems Resources API
+  description: >-
+    Endpoint for generic resources, including archetypes and templates. May sometimes be easier to use.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Resources
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-resources-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-sessions-api
+  name: Ocean Health Systems Sessions API
+  description: Endpoint for creating a new user session or signing out.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-subdomains-api
+  name: Ocean Health Systems Subdomains API
+  description: Endpoint for subdomain-related services, including listing and getting subdomains.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Subdomains
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-subdomains-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-templates-api
+  name: Ocean Health Systems Templates API
+  description: Endpoint for template-related services, including listing and getting templates.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-templates-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: Authentication
+    url: authentication/ocean-health-systems-authentication.yml
+  - type: Conventions
+    url: conventions/ocean-health-systems-conventions.yml
+  - type: ErrorCatalog
+    url: errors/ocean-health-systems-problem-types.yml
+  - type: DataModel
+    url: data-model/ocean-health-systems-data-model.yml
+  - type: RateLimits
+    url: rate-limits/ocean-health-systems-rate-limits.yml
+- aid: ocean-health-systems:ocean-health-systems-users-api
+  name: Ocean Health Systems Users API
+  description: Endpoint for user-related services, including creating new users as an admin.
+  humanURL: https://ckm.openehr.org/ckm/rest-doc/
+  baseURL: https://ckm.openehr.org/ckm/rest/v1
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/ocean-health-systems-users-api-openapi.yml
+  - type: Documentation
+    url: https://ckm.openehr.org/ckm/rest-doc/
+  - type: APIReference
+    url: https://ckm.openehr.org/ckm/rest-doc/
   - type: Authentication
     url: authentication/ocean-health-systems-authentication.yml
   - type: Conventions
