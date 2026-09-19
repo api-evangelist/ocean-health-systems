@@ -101,6 +101,8 @@ apis:
   humanURL: https://ckm.openehr.org/ckm/rest-doc/
   baseURL: https://ckm.openehr.org/ckm/rest/v1
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
@@ -247,6 +249,8 @@ apis:
   humanURL: https://ckm.openehr.org/ckm/rest-doc/
   baseURL: https://ckm.openehr.org/ckm/rest/v1
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
