@@ -1,0 +1,271 @@
+openapi: 3.2.0
+info:
+  description: REST API for the Clinical Knowledge Manager.
+  version: 1.6.0
+  title: CKM REST Resources API
+  contact:
+    name: CKM Support
+    url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+    email: ckm@oceaninformatics.com
+servers:
+- url: /ckm/rest/v1
+tags:
+- name: Resources
+  description: Endpoint for generic resources, including archetypes and templates. May sometimes be easier to use.
+paths:
+  /resources/publisher-namespace:
+    get:
+      tags:
+      - Resources
+      summary: Gets the currently configured publisher namespace for this CKM instance
+      description: ''
+      operationId: PublisherNamespace
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the publisher namespace.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: General bad request.
+  /resources/{cid-resource}:
+    get:
+      tags:
+      - Resources
+      summary: Gets a CKM Resource. Can be used for both an archetype or a template
+      description: Returns a CKM Resource, i.e. the main data about an archetype or a template.
+      operationId: getCKMResource
+      parameters:
+      - name: cid-resource
+        in: path
+        description: The citeable identifier of the archetype or template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype or template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the resource is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's or template's main data.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype or template with the provided citeable identifier (cid-resource) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /resources/{cid-resource}/status:
+    get:
+      tags:
+      - Resources
+      summary: Gets the current status of the archetype or template in CKM
+      description: ''
+      operationId: getCurrentStatus
+      parameters:
+      - name: cid-resource
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's or template's current status.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified template does not have a status (branch template).
+        '404':
+          description: The archetype or template could not be found (based on the provided credentials, if any).
+  /resources/{cid-resource}/status/{asset-version}:
+    get:
+      tags:
+      - Resources
+      summary: Gets the status of the archetype or template in CKM for the specified asset…
+      description: ''
+      operationId: getStatusAtVersion
+      parameters:
+      - name: cid-resource
+        in: path
+        description: The citeable identifier of the archetype or template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: path
+        description: The asset version of the archetype or template.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's or template's status at the specified asset-version.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified archetype or template does not have a status (branch resource).
+        '404':
+          description: The archetype or template could not be found (based on the provided credentials), or the archetype/template could not be found in the stated asset-version.
+components:
+  schemas:
+    CkmResource:
+      type: object
+      properties:
+        cid:
+          type: string
+          example: 1013.1.130
+          description: The citeable identifier of this resource.
+        versionAsset:
+          type: integer
+          format: int32
+          example: 12
+          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
+        resourceMainId:
+          type: string
+          description: The main identifer for this resource.
+        resourceMainDisplayName:
+          type: string
+          description: The main display name for the retrieved resource.
+        resourceType:
+          type: string
+          description: The resource type of the retrieved resource.
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        templateType:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+        resourceDescription:
+          type: string
+          description: For archetypes, the concept description.
+        status:
+          type: string
+          example: PUBLISHED
+          description: The resource status of the retrieved resource.
+        versionAssetLatest:
+          type: integer
+          format: int32
+          example: 25
+          description: The latest asset version of this resource.
+        versionAssetLatestPublished:
+          type: integer
+          format: int32
+          example: 23
+          description: The latest published asset version of this resource.
+        uid:
+          type: string
+          description: For archetypes, the archetype's uid that usually only changes with each major version.
+        buildUid:
+          type: string
+          description: For archetypes, the archetype's build_uid that usually changes with each commit.
+        revision:
+          type: string
+          example: 1.0.0
+          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
+        revisionLatest:
+          type: string
+          example: 1.1.1-alpha
+          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
+        revisionLatestPublished:
+          type: string
+          example: 1.1.0
+          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
+        creationTime:
+          type: string
+          format: date-time
+          description: The initial creation time of this resource (in its initial version) in CKM.
+        modificationTime:
+          type: string
+          format: date-time
+          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
+        branchName:
+          type: string
+          description: If not a trunk resource, this states the name of the branch.
+        cidProject:
+          type: string
+          description: The citeable id of the project that owns this resource.
+        projectName:
+          type: string
+          description: The name of the project that owns this resource.
+      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
+  securitySchemes:
+    sessionid:
+      description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
+      type: apiKey
+      name: JSESSIONID
+      in: header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentification using the CKM username and password. The provided credentials are used (and validated) on making an actual request.
+externalDocs:
+  description: Find out more about openEHR and the Clinical Knowledge Manager (CKM)
+  url: http://www.openehr.org

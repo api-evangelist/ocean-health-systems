@@ -1,0 +1,1144 @@
+openapi: 3.2.0
+info:
+  description: REST API for the Clinical Knowledge Manager.
+  version: 1.6.0
+  title: CKM REST Templates API
+  contact:
+    name: CKM Support
+    url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+    email: ckm@oceaninformatics.com
+servers:
+- url: /ckm/rest/v1
+tags:
+- name: Templates
+  description: Endpoint for template-related services, including listing and getting templates.
+paths:
+  /templates:
+    get:
+      tags:
+      - Templates
+      summary: Lists all or a selection of templates in CKM
+      description: ''
+      operationId: listTemplates
+      parameters:
+      - name: template-type
+        in: query
+        description: Set to only list templates of the specified template type.
+        required: false
+        schema:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+      - name: cid-subdomain
+        in: query
+        description: Set to only list templates of the specified subdomain.
+        required: false
+        schema:
+          type: string
+      - name: cid-project
+        in: query
+        description: Set to only list templates of the specified project.
+        required: false
+        schema:
+          type: string
+      - name: project-type
+        in: query
+        description: Set to only list templates in projects of this type. Also note the 'owned-only' param.
+        required: false
+        schema:
+          type: string
+          enum:
+          - PROJECT
+          - INCUBATOR
+      - name: owned-only
+        in: query
+        description: Set to true to only list templates that are owned by the specified project/any projects of the specified project-type/any projects of the specified subdomain. Set to false (DEFAULT) to include templates referenced by the project(s) as well.
+        required: false
+        schema:
+          type: boolean
+      - name: search-text
+        in: query
+        description: Set to only list templates with this search text in the template meta data.
+        required: false
+        schema:
+          type: string
+      - name: restrict-search-to-main-data
+        in: query
+        description: Restrict search to main data of the template. If true, ONLY finds the search text in the main metadata fields such as template name, template id, keywords, etc. If false, searches in the complete oet file. Defaults to false (=non-restricted).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: require-all-search-words
+        in: query
+        description: If multiple search words, should ALL words be required (true = DEFAULT), or is ANY sufficient (false).
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: resource-state
+        in: query
+        description: Set to only list templates with the provided resource states. Defaults to all active resource states, i.e. all states except REJECTED and DEPRECATED.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - INITIAL
+            - DRAFT
+            - TEAMREVIEW
+            - REVIEWSUSPENDED
+            - PUBLISHED
+            - REASSESS_DRAFT
+            - REASSESS_TEAMREVIEW
+            - REASSESS_REVIEWSUSPENDED
+            - REJECTED
+            - DEPRECATED
+      - name: class
+        in: query
+        description: 'Set to only list templates that are classified in/indexed with the specified scheme + class (term). Usage: scheme:class/subclass, where scheme, class and subclasses must be written exactly as is in the original language (no translations). The scheme is separated from the class using ":" and subclasses are separated by "/". For example: Health Domain:Surgery/General Surgery. If a slash "/" is used in a class name itself, this must be replaced with a pipe symbol "|". For the language scheme, simply use the available ISO 639-1 language codes (2 digits), e.g. ''en'', ''nb'',  or ''de''. For regional variants, use e.g.: ''en/en-au''.'
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: require-all-classes
+        in: query
+        description: If multiple classes (terms) have been specified, should ALL be required (true), or is ANY sufficient (false = DEFAULT).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: include-subclasses
+        in: query
+        description: If one or more classes (terms) have been specified, should subclasses be included (true) or not (false = DEFAULT).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: start-date
+        in: query
+        description: Set to only list templates last modified on or after this date/time. Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: end-date
+        in: query
+        description: Set to only list templates last modified up to the specified date/time. Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start(!) of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: The maximum number of templates returned in the call. <b>Defaults to 20.</b>  Response header contains x-total-count to indicate the total number of results. The size should not be set too high - offset can be used to retrieve further results.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: offset
+        in: query
+        description: The offset when not listing all templates. Defaults to 0, i.e. starting with the first template.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the main data of all requested templates.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+    post:
+      tags:
+      - Templates
+      summary: Imports a new template into a CKM project.
+      description: ''
+      operationId: importTemplate
+      parameters:
+      - name: template-type
+        in: query
+        description: The template type.
+        required: true
+        schema:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+      - name: cid-project
+        in: query
+        description: The citeable identifier of the project to import the new template into.
+        required: true
+        schema:
+          type: string
+      - name: log-message
+        in: query
+        description: A log message for the import.
+        required: true
+        schema:
+          type: string
+      - name: proceed-if-outdated-resources-used
+        in: query
+        description: True to proceed even if some related resources are outdated, i.e. there is a newer revision of a resource in CKM. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '201':
+          description: Successful import of the new template.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request, such as that the OET format is invalid. Also used to indicate that the provided project cid is not valid or e.g. the project belongs to a remote subdomain that cannot own templates. Or a template with the specified template id or name already exists in CKM.
+        '403':
+          description: Forbidden to import this template for one of many reasons. The user may not be allowed to upload to the stated project based on the user's provided credentials.
+        '424':
+          description: Dependencies to required archetypes and/or embedded templates failed. I.e. there were validation errors (or warnings if proceed-if-outdated-resources-used is set to false).
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        description: The complete OET serialisation as a string.
+        required: true
+  /templates/{cid-template}:
+    get:
+      tags:
+      - Templates
+      summary: Gets the main data of one template
+      description: ''
+      operationId: getTemplateAsCKMResource
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's main data.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+    put:
+      tags:
+      - Templates
+      summary: Updates the specified template on the trunk.
+      description: ''
+      operationId: updateTemplateOnTrunk
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: log-message
+        in: query
+        description: A log message describing the update.
+        required: true
+        schema:
+          type: string
+      - name: proceed-if-outdated-resources-used
+        in: query
+        description: True to proceed even if some related resources are outdated, i.e. there is a newer revision of a resource in CKM. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: republish-immediately
+        in: query
+        description: True to immediately republish a TRUNK template if - and only if - its status is PUBLISHED at the moment. If false, the template's status is 'naturally' updated to REASSESS_DRAFT as the next recommended step to enable reviews etc before republication. If true, the template is immediately republished (old status = new status = PUBLISHED). Has no effect, if the template is not currently in PUBLISHED state. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: if-match
+        in: header
+        description: If this header is set, it must match the current asset-version of the resource in CKM. Otherwise the import is cancelled with a 412 (Precondition failed) error.
+        required: false
+        schema:
+          type: string
+      - name: if-unmodified-since
+        in: header
+        description: If this header is set, the newest asset version of the resource must be older than the specified date. Otherwise the import is cancelled with a 412 (Precondition failed) error.<br/> Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful update of the template.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request, such as that the OET format is invalid.
+        '403':
+          description: 'Forbidden to update this template for one of various reasons. The user may not be allowed to upload to the template''s project based on the provided credentials. '
+        '404':
+          description: Template with given citeable identifier does not exist.
+        '412':
+          description: Precondition failed. A provided if-match or if-unmodified-since header precondition fails. This means the optimistic locking approach has found an update to the resource afterwards and has thus prevented the update.
+        '424':
+          description: Dependencies to required archetypes and/or embedded templates failed. I.e. there were validation errors (or warnings if proceed-if-outdated-resources-used is set to false)
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        description: The complete OET serialisation as a string.
+        required: true
+    delete:
+      tags:
+      - Templates
+      summary: PERMANENTLY and IRREVOCABLY DELETES the specified template in CKM.
+      description: ''
+      operationId: deleteTemplate
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: delete-if-trunk
+        in: query
+        description: True to delete even if the specified cid refers to a trunk template. This will also PERMANENTLY DESTROY EVERYTHING that depends on this resource, including its branches, review rounds, individual reviews, discussion comments, documents from the resource's resource centre, tasks from its to do list, change requests, etc. False to only proceed if the specified cid refers to a branch template.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: delete-if-published
+        in: query
+        description: True to delete even if the specified template is or has previously been PUBLISHED.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '204':
+          description: Successful deletion of the template.
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified template cannot be deleted with the provided credentials or because there are other restrictions or dependencies.
+        '404':
+          description: The template could not be found (based on the provided credentials, if any).
+  /templates/{cid-template}/embedded-templates:
+    get:
+      tags:
+      - Templates
+      summary: Lists the templates embedded in the specified template, if any
+      description: ''
+      operationId: listEmbeddedTemplates
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: version-template
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: direct-only
+        in: query
+        description: True to only return directly embedded templates, i.e. not going down the hierarchy in case of multiple template levels. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's embedded templates.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/required-archetypes:
+    get:
+      tags:
+      - Templates
+      summary: Lists the archetypes required for (i.e. used by) the specified template
+      description: ''
+      operationId: listRequiredArchetypesForTemplate
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: direct-only
+        in: query
+        description: True to only return archetypes directly required by the specified template, i.e. not going down the hierarchy in case of multiple template levels. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's required archetypes.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/oet:
+    get:
+      tags:
+      - Templates
+      summary: Gets the specified template in OET format
+      description: ''
+      operationId: getTemplateOET
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's logical definition in OET format.
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/opt:
+    get:
+      tags:
+      - Templates
+      summary: Gets the operational template (OPT) for the specified template
+      description: ''
+      operationId: getTemplateOPT
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's operational template in OPT format.
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/hash:
+    get:
+      tags:
+      - Templates
+      summary: Gets the MD5 hash of the specified template in OET format
+      description: ''
+      operationId: getTemplateOETHash
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's hash of the oet.
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/file-set-url:
+    get:
+      tags:
+      - Templates
+      summary: Gets the URL for a file set of the template.
+      description: ''
+      operationId: getTemplateFileSetURL
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the template. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the template is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's file set URL.
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the specified version or (in case of get-latest-published) has never been published or is not accessible based on the provided credentials.
+  /templates/{cid-template}/status:
+    get:
+      tags:
+      - Templates
+      summary: Gets the current status of the template in CKM
+      description: ''
+      operationId: getCurrentTemplateStatus
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's current status.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified template does not have a status (branch template).
+        '404':
+          description: The template could not be found (based on the provided credentials, if any).
+    put:
+      tags:
+      - Templates
+      summary: Updates the status of the specified trunk template
+      description: ''
+      operationId: updateTemplateStatus
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the trunk template.
+        required: true
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: The new status of the template. This status must be a status that is a possible new status for the template based on its current status as well as its owning project or incubator.
+        required: true
+        schema:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+      - name: proceed-if-active-branches
+        in: query
+        description: True to proceed even if the resource has active branches. Before some status changes, it may be advisable to clean up (commit, resolve, reject or delete) any active branches. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: if-match
+        in: header
+        description: If this header is set, it must match the current asset-version of the resource in CKM. Otherwise the import is cancelled with a 412 (Precondition failed) error.
+        required: false
+        schema:
+          type: string
+      - name: if-unmodified-since
+        in: header
+        description: If this header is set, the newest asset version of the resource must be older than the specified date. Otherwise the import is cancelled with a 412 (Precondition failed) error.<br/> Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful update of the template status.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request, such as that the format of the citeable identifier is invalid or the provided new status does not exist at all.
+        '403':
+          description: 'Forbidden to update the template status for one of various reasons.<br/> The user may not be allowed to update the template status based on the provided credentials.<br/> The provided citeable identifier of the template must refer to a trunk template, not to one of its branches.<br/> This response code may also be provided if the requested new status exists but cannot be set based on the state machine: For example, it is not possible to transition from PUBLISHED to DRAFT or from PUBLISHED to REJECTED.<br/> Or, the specified template may have active branches and proceed-if-active-branches was not set to true.'
+        '404':
+          description: Template with given citeable identifier does not exist (or is not visible to the user based on provided credentials).
+        '412':
+          description: Precondition failed. A provided if-match or if-unmodified-since header precondition fails. This means the optimistic locking approach has found an update to the resource afterwards and has thus prevented the update.
+  /templates/validation-report:
+    post:
+      tags:
+      - Templates
+      summary: Gets CKM's template validation report for the template provided as OET.
+      description: ''
+      operationId: getValidationReportForTemplate
+      parameters:
+      - name: include-information
+        in: query
+        description: True to include template validation information items as well (Correct matches). Defaults to false - only warnings and errors.
+        required: false
+        schema:
+          type: boolean
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's validation report. This status is also returned if the retrieved validation report contains no errors or warnings.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateValidationItem'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateValidationItem'
+        '400':
+          description: General bad request.
+        '401':
+          description: Log in required to use this service.
+        '403':
+          description: Forbidden to use with the provided user credentials.
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        description: The complete OET serialisation as a string.
+        required: true
+  /templates/{cid-template}/status/{asset-version}:
+    get:
+      tags:
+      - Templates
+      summary: Gets the status of the template in CKM for the specified asset version (i.e.
+      description: ''
+      operationId: getTemplateStatusAtVersion
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: path
+        description: The asset version of the template. Defaults to the latest.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's status at the specified asset-version.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified template does not have a status (branch template).
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist or does not exist in the requested asset-version or is not accessible based on the provided credentials.
+  /templates/{cid-template}/project:
+    get:
+      tags:
+      - Templates
+      summary: Gets the CKM project of the template
+      description: ''
+      operationId: getProjectOfTemplate
+      parameters:
+      - name: cid-template
+        in: path
+        description: The citeable identifier of the template.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's project.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: General bad request.
+        '404':
+          description: Template with provided citeable identifier (cid-template) does not exist on the trunk or is not accessible based on the provided credentials.
+  /templates/citeable-identifier/{template-id}:
+    get:
+      tags:
+      - Templates
+      summary: Gets the citeable identifier of a template based on the specified template id
+      description: ''
+      operationId: getCiteableIdentifierForTemplateId
+      parameters:
+      - name: template-id
+        in: path
+        description: The template id of the template.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the template's citeable identifier.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: General bad request.
+        '404':
+          description: A template with the provided template-id does not exist or is not accessible based on the provided credentials.
+components:
+  schemas:
+    TemplateValidationItem:
+      type: object
+      properties:
+        errorType:
+          type: string
+        errorText:
+          type: string
+        errorDescription:
+          type: string
+        cidResource:
+          type: string
+        resourceMainId:
+          type: string
+        resourceMainDisplayName:
+          type: string
+        assetVersion:
+          type: integer
+          format: int32
+        assetVersionLatest:
+          type: integer
+          format: int32
+        assetVersionLatestPublished:
+          type: integer
+          format: int32
+        revisionNumber:
+          type: string
+        revisionNumberLatest:
+          type: string
+        revisionNumberLatestPublished:
+          type: string
+        resourceType:
+          type: string
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        expectedHash:
+          type: string
+          description: The hash from the integrity check section of the provided template.
+        foundHash:
+          type: string
+          description: The hash in the latest revision of the archetype.
+        foundHashLatestPublished:
+          type: string
+          description: The hash in the latest PUBLISHED revision of the archetype, if any.
+        statusAtVersion:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        statusLatest:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        statusLatestPublished:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        validationSeverity:
+          type: string
+          enum:
+          - FATAL
+          - WARNING
+          - INFO
+        licencingOrCopyrightError:
+          type: boolean
+    CkmResource:
+      type: object
+      properties:
+        cid:
+          type: string
+          example: 1013.1.130
+          description: The citeable identifier of this resource.
+        versionAsset:
+          type: integer
+          format: int32
+          example: 12
+          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
+        resourceMainId:
+          type: string
+          description: The main identifer for this resource.
+        resourceMainDisplayName:
+          type: string
+          description: The main display name for the retrieved resource.
+        resourceType:
+          type: string
+          description: The resource type of the retrieved resource.
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        templateType:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+        resourceDescription:
+          type: string
+          description: For archetypes, the concept description.
+        status:
+          type: string
+          example: PUBLISHED
+          description: The resource status of the retrieved resource.
+        versionAssetLatest:
+          type: integer
+          format: int32
+          example: 25
+          description: The latest asset version of this resource.
+        versionAssetLatestPublished:
+          type: integer
+          format: int32
+          example: 23
+          description: The latest published asset version of this resource.
+        uid:
+          type: string
+          description: For archetypes, the archetype's uid that usually only changes with each major version.
+        buildUid:
+          type: string
+          description: For archetypes, the archetype's build_uid that usually changes with each commit.
+        revision:
+          type: string
+          example: 1.0.0
+          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
+        revisionLatest:
+          type: string
+          example: 1.1.1-alpha
+          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
+        revisionLatestPublished:
+          type: string
+          example: 1.1.0
+          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
+        creationTime:
+          type: string
+          format: date-time
+          description: The initial creation time of this resource (in its initial version) in CKM.
+        modificationTime:
+          type: string
+          format: date-time
+          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
+        branchName:
+          type: string
+          description: If not a trunk resource, this states the name of the branch.
+        cidProject:
+          type: string
+          description: The citeable id of the project that owns this resource.
+        projectName:
+          type: string
+          description: The name of the project that owns this resource.
+      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
+    Project:
+      type: object
+      properties:
+        cid:
+          type: string
+        name:
+          type: string
+        projectURL:
+          type: string
+        cidSubdomain:
+          type: string
+        subdomainName:
+          type: string
+        public:
+          type: boolean
+        projectType:
+          type: string
+          enum:
+          - PROJECT
+          - INCUBATOR
+        remoteSubdomain:
+          type: boolean
+        forOrderTemplates:
+          type: boolean
+  securitySchemes:
+    sessionid:
+      description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
+      type: apiKey
+      name: JSESSIONID
+      in: header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentification using the CKM username and password. The provided credentials are used (and validated) on making an actual request.
+externalDocs:
+  description: Find out more about openEHR and the Clinical Knowledge Manager (CKM)
+  url: http://www.openehr.org

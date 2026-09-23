@@ -1,0 +1,862 @@
+openapi: 3.2.0
+info:
+  description: REST API for the Clinical Knowledge Manager.
+  version: 1.6.0
+  title: CKM REST Archetypes API
+  contact:
+    name: CKM Support
+    url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+    email: ckm@oceaninformatics.com
+servers:
+- url: /ckm/rest/v1
+tags:
+- name: Archetypes
+  description: Endpoint for archetype-related services, including listing and getting archetypes.
+paths:
+  /archetypes/{cid-archetype}/hash:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the (non-canonical) MD5 hash of the specified archetype in ADL format
+      description: ''
+      operationId: getArchetypeADLHash
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: semantic-version
+        in: query
+        description: The semantic version of the archetype, for example 1.0.1 or 1.0.2-alpha. Only one, either the asset version or the semantic version, can be provided. Providing both will cause an error, and if neither is provided, the latest version will be used by default.
+        required: false
+        schema:
+          type: string
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the archetype is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version and semantic-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's hash of the ADL.
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+  /archetypes/{cid-archetype}/parent:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets main data about the specified archetype's parent archetype, if any
+      description: ''
+      operationId: getParentArchetype
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's parent.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '204':
+          description: The specified archetype was found, but it has no parent because it is not specialised. 204 is the sibling code for 200 OK, but without a response body.
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+  /archetypes/citeable-identifier/{archetype-id}:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the citeable identifier of an archetype based on the specified archetype id
+      description: ''
+      operationId: getCiteableIdentifierForArchetypeId
+      parameters:
+      - name: archetype-id
+        in: path
+        description: The archetype id of the archetype.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's citeable identifier.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided archetype-id does not exist or is not accessible based on the provided credentials.
+  /archetypes/{cid-archetype}/status:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the current status of the archetype in CKM
+      description: ''
+      operationId: getCurrentArchetypeStatus
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's current status.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified archetype does not have a status (branch archetype).
+        '404':
+          description: The archetype could not be found (based on the provided credentials, if any).
+  /archetypes/{cid-archetype}/status/{asset-version}:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the status of the archetype in CKM for the specified asset version (i.e.
+      description: ''
+      operationId: getArchetypeStatusAtVersion
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: path
+        description: The asset version of the archetype.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's status at the specified asset-version.
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                - INITIAL
+                - DRAFT
+                - TEAMREVIEW
+                - REVIEWSUSPENDED
+                - RELEASECANDIDATE
+                - PUBLISHED
+                - REASSESS_DRAFT
+                - REASSESS_TEAMREVIEW
+                - REASSESS_REVIEWSUSPENDED
+                - REJECTED
+                - DEPRECATED
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified archetype does not have a status (branch archetype).
+        '404':
+          description: The archetype could not be found (based on the provided credentials), or the archetype could not be found in the stated asset-version.
+  /archetypes/{cid-archetype}/project:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the CKM project of the archetype
+      description: ''
+      operationId: getProjectOfArchetype
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's project.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Project'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: General bad request.
+        '404':
+          description: Archetype with provided citeable identifier (cid-archetype) does not exist or is not accessible based on the provided credentials or is not a trunk archetype.
+  /archetypes:
+    get:
+      tags:
+      - Archetypes
+      summary: Lists a selection of archetypes in CKM
+      description: ''
+      operationId: listArchetypes
+      parameters:
+      - name: cid-subdomain
+        in: query
+        description: Set to only list archetypes of the specified subdomain.
+        required: false
+        schema:
+          type: string
+      - name: cid-project
+        in: query
+        description: Set to only list archetypes of the specified project.
+        required: false
+        schema:
+          type: string
+      - name: project-type
+        in: query
+        description: Set to only list archetypes in projects of this type. Also note the 'owned-only' param.
+        required: false
+        schema:
+          type: string
+          enum:
+          - PROJECT
+          - INCUBATOR
+      - name: owned-only
+        in: query
+        description: Set to true to only list archetypes that are owned by the specified project/any projects of the specified project-type/any projects of the specified subdomain. Set to false (DEFAULT) to include archetypes referenced by the project(s) as well.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: search-text
+        in: query
+        description: Set to only list archetypes with this search text in the archetype meta data.
+        required: false
+        schema:
+          type: string
+      - name: restrict-search-to-main-data
+        in: query
+        description: Restrict search to main data of the archetype. If true, ONLY finds the search text in archetype id, concept name, and descriptive data such as author, purpose, use, misuse, keywords. If false, includes all meta data, the archetype definition, and the archetype's ontology in the search. Defaults to false (=non-restricted).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: require-all-search-words
+        in: query
+        description: If multiple search words, should ALL words be required (true = DEFAULT), or is ANY sufficient (false).
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: resource-state
+        in: query
+        description: Set to only list archetypes with the states resource states. Defaults to all active resource states, i.e. all states except REJECTED and DEPRECATED.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - INITIAL
+            - DRAFT
+            - TEAMREVIEW
+            - REVIEWSUSPENDED
+            - PUBLISHED
+            - REASSESS_DRAFT
+            - REASSESS_TEAMREVIEW
+            - REASSESS_REVIEWSUSPENDED
+            - REJECTED
+            - DEPRECATED
+      - name: class
+        in: query
+        description: 'Set to only list archetypes that are classified in/indexed with the specified scheme + class (term). Usage: scheme:class/subclass, where scheme, class and subclasses must be written exactly as is in the original language (no translations). The scheme is separated from the class using ":" and subclasses are separated by "/". For example: Health Domain:Surgery/General Surgery. If a slash "/" is used in a class name itself, this must be replaced with a pipe symbol "|". For the language scheme, simply use the available ISO 639-1 language codes (2 digits), e.g. ''en'', ''nb'',  or ''de''. For regional variants, use e.g.: ''en/en-au''.'
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: require-all-classes
+        in: query
+        description: If multiple classes (terms) have been specified, should ALL be required (true), or is ANY sufficient (false = DEFAULT).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: include-subclasses
+        in: query
+        description: If one or more classes (terms) have been specified, should subclasses be included (true) or not (false = DEFAULT).
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: start-date
+        in: query
+        description: Set to only list archetypes last modified on or after this date/time.Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: end-date
+        in: query
+        description: Set to only list archetypes modified up to the specified date/time. Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start(!) of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: The preferred language to retrieve the archetype concept names in, eg. 'en' or 'de'. Defaults to the server language. Automatic fallbacks.
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: The maximum number of archetypes returned in the call. <b>Defaults to 20.</b> Response header contains x-total-count to indicate the total number of results. The size should not be set too high - offset can be used to retrieve further results.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: offset
+        in: query
+        description: The offset when not listing all archetypes. Defaults to 0, i.e. starting with the first archetype.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the main data of all requested archetypes.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+    post:
+      tags:
+      - Archetypes
+      summary: Imports a new archetype into a CKM project.
+      description: ''
+      operationId: importArchetype
+      parameters:
+      - name: cid-project
+        in: query
+        description: The citeable identifier of the project to import the new archetype into.
+        required: true
+        schema:
+          type: string
+      - name: log-message
+        in: query
+        description: A log message for the import.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '201':
+          description: Successful import of the new archetype.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request, such as that the provided ADL format is invalid (unparsable) or there were fatal validation errors. Provided project may not be valid.
+        '403':
+          description: 'Forbidden to import this archetype for one of many reasons. For example: archetype with the provided archetype id already exists in CKM. Or the user is not allowed to upload to the stated project based on the provided credentials. '
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        description: The complete ADL serialisation as a string.
+        required: true
+  /archetypes/{cid-archetype}:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the main data of one archetype
+      description: ''
+      operationId: getArchetypeAsCKMResource
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: semantic-version
+        in: query
+        description: The semantic version of the archetype, for example 1.0.1 or 1.0.2-alpha. Only one, either the asset version or the semantic version, can be provided. Providing both will cause an error, and if neither is provided, the latest version will be used by default.
+        required: false
+        schema:
+          type: string
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the archetype is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version and semantic-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: language
+        in: query
+        description: The preferred language to retrieve the concept name in. Defaults to the server language. Automatic fallbacks.
+        required: false
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's main data.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+    put:
+      tags:
+      - Archetypes
+      summary: Updates the stated archetype on the trunk.
+      description: ''
+      operationId: updateArchetypeOnTrunk
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: log-message
+        in: query
+        description: A log message describing the update.
+        required: true
+        schema:
+          type: string
+      - name: if-match
+        in: header
+        description: If this header is set, it must match the current asset-version of the resource in CKM. Otherwise the import is cancelled with a 412 (Precondition failed) error.
+        required: false
+        schema:
+          type: string
+      - name: if-unmodified-since
+        in: header
+        description: If this header is set, the newest asset version of the resource must be older than the specified date. Otherwise the import is cancelled with a 412 (Precondition failed) error.<br/> Expected date format is the ISO Date Time format, e.g. 2025-03-02T10:15:30+01:00. If the timezone offset is omitted (e.g. 2025-03-02T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2025-03-02), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful update of the archetype.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CkmResource'
+        '400':
+          description: General bad request, such as that the ADL format is invalid.
+        '403':
+          description: Forbidden to update this archetype for one of various reasons. For example, the user may not be allowed to upload to the archetype's project based on the provided credentials. Or, the provided archetype has changes that are not allowed to be submitted via the API (copyright changes, original namespace change, identical archetype) or would update a published archetype.
+        '404':
+          description: Archetype with provided citeable identifier and/or archetype id does not exist.
+        '412':
+          description: Precondition failed. A provided if-match or if-unmodified-since header precondition fails. This means the optimistic locking approach has found an update to the resource afterwards and has thus prevented the update.
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        description: The complete ADL serialisation as a string.
+        required: true
+    delete:
+      tags:
+      - Archetypes
+      summary: PERMANENTLY and IRREVOCABLY DELETES the specified archetype in CKM.
+      description: ''
+      operationId: deleteArchetype
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: delete-if-trunk
+        in: query
+        description: True to delete even if the specified cid refers to a trunk archetype. This will also delete all branches PERMANENTLY DESTROY EVERYTHING that depends on this resource, including its branches, review rounds, individual reviews, discussion comments, documents from the resource's resource centre, tasks from its to do list, change requests, etc. False to only proceed if the specified cid refers to a branch of an archetype.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: delete-if-published
+        in: query
+        description: True to delete even if the specified archetype is or has previously been PUBLISHED.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '204':
+          description: Successful deletion of the archetype.
+        '400':
+          description: General bad request.
+        '403':
+          description: Forbidden - the specified archetype cannot be deleted with the provided credentials or because there are other restrictions or dependencies.
+        '404':
+          description: The archetype could not be found (based on the provided credentials, if any).
+  /archetypes/{cid-archetype}/adl:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the specified archetype in ADL format
+      description: ''
+      operationId: getArchetypeInADL
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: semantic-version
+        in: query
+        description: The semantic version of the archetype, for example 1.0.1 or 1.0.2-alpha. Only one, either the asset version or the semantic version, can be provided. Providing both will cause an error, and if neither is provided, the latest version will be used by default.
+        required: false
+        schema:
+          type: string
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the archetype is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version and semantic-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's ADL.
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+  /archetypes/{cid-archetype}/xml:
+    get:
+      tags:
+      - Archetypes
+      summary: Gets the specified archetype in XML format
+      description: ''
+      operationId: getArchetypeInXML
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: semantic-version
+        in: query
+        description: The semantic version of the archetype, for example 1.0.1 or 1.0.2-alpha. Only one, either the asset version or the semantic version, can be provided. Providing both will cause an error, and if neither is provided, the latest version will be used by default.
+        required: false
+        schema:
+          type: string
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the archetype is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version and semantic-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's XML.
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+  /archetypes/{cid-archetype}/mindmap:
+    get:
+      tags:
+      - Archetypes
+      operationId: getArchetypeMindmap
+      parameters:
+      - name: cid-archetype
+        in: path
+        description: The citeable identifier of the archetype.
+        required: true
+        schema:
+          type: string
+      - name: asset-version
+        in: query
+        description: The asset version of the archetype. Defaults to the latest.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: semantic-version
+        in: query
+        description: The semantic version of the archetype, for example 1.0.1 or 1.0.2-alpha. Only one, either the asset version or the semantic version, can be provided. Providing both will cause an error, and if neither is provided, the latest version will be used by default.
+        required: false
+        schema:
+          type: string
+      - name: get-latest-published
+        in: query
+        description: If set to true, the latest published revision of the archetype is retrieved. If the resource has never been published a 404 error code is returned. If get-latest-published is set to true, the asset-version and semantic-version must not be specified. Defaults to false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: language
+        in: query
+        description: The preferred language for any values from the archetype. Defaults to the server language. Automatic fallbacks.
+        required: false
+        schema:
+          type: string
+      - name: locale
+        in: query
+        description: The preferred locale for any locale-specific strings in the mindmap. Defaults to the server language.
+        required: false
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the archetype's mindmap.
+        '400':
+          description: General bad request.
+        '404':
+          description: An archetype with the provided citeable identifier (cid-archetype) does not exist or does not exist in the specified asset-version, semantic-version or (in case of get-latest-published) has never been published. Alternatively, the archetype may not be accessible based on the provided credentials.
+      summary: Get archetype mindmap
+      x-summary-source: derived
+components:
+  schemas:
+    CkmResource:
+      type: object
+      properties:
+        cid:
+          type: string
+          example: 1013.1.130
+          description: The citeable identifier of this resource.
+        versionAsset:
+          type: integer
+          format: int32
+          example: 12
+          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
+        resourceMainId:
+          type: string
+          description: The main identifer for this resource.
+        resourceMainDisplayName:
+          type: string
+          description: The main display name for the retrieved resource.
+        resourceType:
+          type: string
+          description: The resource type of the retrieved resource.
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        templateType:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+        resourceDescription:
+          type: string
+          description: For archetypes, the concept description.
+        status:
+          type: string
+          example: PUBLISHED
+          description: The resource status of the retrieved resource.
+        versionAssetLatest:
+          type: integer
+          format: int32
+          example: 25
+          description: The latest asset version of this resource.
+        versionAssetLatestPublished:
+          type: integer
+          format: int32
+          example: 23
+          description: The latest published asset version of this resource.
+        uid:
+          type: string
+          description: For archetypes, the archetype's uid that usually only changes with each major version.
+        buildUid:
+          type: string
+          description: For archetypes, the archetype's build_uid that usually changes with each commit.
+        revision:
+          type: string
+          example: 1.0.0
+          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
+        revisionLatest:
+          type: string
+          example: 1.1.1-alpha
+          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
+        revisionLatestPublished:
+          type: string
+          example: 1.1.0
+          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
+        creationTime:
+          type: string
+          format: date-time
+          description: The initial creation time of this resource (in its initial version) in CKM.
+        modificationTime:
+          type: string
+          format: date-time
+          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
+        branchName:
+          type: string
+          description: If not a trunk resource, this states the name of the branch.
+        cidProject:
+          type: string
+          description: The citeable id of the project that owns this resource.
+        projectName:
+          type: string
+          description: The name of the project that owns this resource.
+      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
+    Project:
+      type: object
+      properties:
+        cid:
+          type: string
+        name:
+          type: string
+        projectURL:
+          type: string
+        cidSubdomain:
+          type: string
+        subdomainName:
+          type: string
+        public:
+          type: boolean
+        projectType:
+          type: string
+          enum:
+          - PROJECT
+          - INCUBATOR
+        remoteSubdomain:
+          type: boolean
+        forOrderTemplates:
+          type: boolean
+  securitySchemes:
+    sessionid:
+      description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
+      type: apiKey
+      name: JSESSIONID
+      in: header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentification using the CKM username and password. The provided credentials are used (and validated) on making an actual request.
+externalDocs:
+  description: Find out more about openEHR and the Clinical Knowledge Manager (CKM)
+  url: http://www.openehr.org

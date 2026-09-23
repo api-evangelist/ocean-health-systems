@@ -1,0 +1,174 @@
+openapi: 3.2.0
+info:
+  description: REST API for the Clinical Knowledge Manager.
+  version: 1.6.0
+  title: CKM REST Resource Proposals API
+  contact:
+    name: CKM Support
+    url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+    email: ckm@oceaninformatics.com
+servers:
+- url: /ckm/rest/v1
+tags:
+- name: Resource Proposals
+  description: Endpoint for resource proposal-related services, including listing and getting resource proposals.
+paths:
+  /resource-proposals:
+    get:
+      tags:
+      - Resource Proposals
+      summary: Lists all or a selection of resource proposals
+      description: ''
+      operationId: listResourceProposals
+      parameters:
+      - name: start-date
+        in: query
+        description: Set to only list resource proposals created or last modified on or after this date/time. Expected date format is the ISO Date Time format, e.g. 2024-12-19T10:15:30+01:00. If the timezone offset is omitted (e.g. 2024-12-19T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2024-12-19), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: end-date
+        in: query
+        description: Set to only list resource proposals created or last modificed up to the specified date/time.Expected date format is the ISO Date Time format, e.g. 2024-12-19T10:15:30+01:00. If the timezone offset is omitted (e.g. 2024-12-19T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2024-12-19), this defaults to the start(!) of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Set to only list resource proposals with the specified status (open, in-process, closed). Defaults to active states only, i.e. open and in-process.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - OPEN
+            - IN_PROCESS
+            - CLOSED
+      - name: size
+        in: query
+        description: The maximum number of resource proposals returned in the call. Defaults to 20.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: offset
+        in: query
+        description: The offset when not listing all resource proposals. Defaults to 0.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the requested resource proposals.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceProposal'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceProposal'
+        '400':
+          description: General bad request.
+  /resource-proposals/{cid}:
+    get:
+      tags:
+      - Resource Proposals
+      summary: Gets one resource proposal
+      description: ''
+      operationId: getResourceProposal
+      parameters:
+      - name: cid
+        in: path
+        description: The citeable identifier of the resource proposal.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the resource proposal.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ResourceProposal'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceProposal'
+        '400':
+          description: General bad request.
+        '404':
+          description: A resource proposal with the specified identifier does not exist (or is not visible to the current user).
+components:
+  schemas:
+    ResourceProposal:
+      type: object
+      properties:
+        cid:
+          type: string
+        versionAsset:
+          type: integer
+          format: int32
+        loginNameCreator:
+          type: string
+        userFullnameCreator:
+          type: string
+        loginNameLastModifier:
+          type: string
+        userFullnameLastModifier:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        modificationTime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - OPEN
+          - IN_PROCESS
+          - CLOSED
+        resourceMainId:
+          type: string
+        resourceMainDisplayName:
+          type: string
+        resourceType:
+          type: string
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        directLink:
+          type: string
+        rpId:
+          type: string
+  securitySchemes:
+    sessionid:
+      description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
+      type: apiKey
+      name: JSESSIONID
+      in: header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentification using the CKM username and password. The provided credentials are used (and validated) on making an actual request.
+externalDocs:
+  description: Find out more about openEHR and the Clinical Knowledge Manager (CKM)
+  url: http://www.openehr.org

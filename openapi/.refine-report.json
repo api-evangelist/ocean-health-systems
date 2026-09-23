@@ -1,0 +1,36 @@
+{
+  "provider": "ocean-health-systems",
+  "sources": [
+    "_original/ocean-health-systems-ckm-openapi-original.json"
+  ],
+  "outputs": [
+    "ocean-health-systems-archetypes-api-openapi.yml",
+    "ocean-health-systems-change-requests-api-openapi.yml",
+    "ocean-health-systems-projects-api-openapi.yml",
+    "ocean-health-systems-resource-proposals-api-openapi.yml",
+    "ocean-health-systems-resources-api-openapi.yml",
+    "ocean-health-systems-sessions-api-openapi.yml",
+    "ocean-health-systems-subdomains-api-openapi.yml",
+    "ocean-health-systems-templates-api-openapi.yml",
+    "ocean-health-systems-users-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "ocean-health-systems-ckm-openapi-original.json: upgraded swagger 2.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "ocean-health-systems-archetypes-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-change-requests-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-projects-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-resource-proposals-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-resources-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-sessions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-subdomains-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-templates-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ocean-health-systems-users-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

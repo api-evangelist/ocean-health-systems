@@ -1,0 +1,284 @@
+openapi: 3.2.0
+info:
+  description: REST API for the Clinical Knowledge Manager.
+  version: 1.6.0
+  title: CKM REST Change Requests API
+  contact:
+    name: CKM Support
+    url: https://oceanehr.atlassian.net/servicedesk/customer/portal/15
+    email: ckm@oceaninformatics.com
+servers:
+- url: /ckm/rest/v1
+tags:
+- name: Change Requests
+  description: Endpoint for change request-related services, including listing and getting change requests.
+paths:
+  /change-requests:
+    get:
+      tags:
+      - Change Requests
+      summary: Lists all or a selection of change requests
+      description: ''
+      operationId: listChangeRequests
+      parameters:
+      - name: cid-resource
+        in: query
+        description: Set to only list change requests of the specified resource.
+        required: false
+        schema:
+          type: string
+      - name: resource-type
+        in: query
+        description: Set to only list change requests of specified resource type (archetype, template, ...).
+        required: false
+        schema:
+          type: string
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+      - name: priority
+        in: query
+        description: Set to only list change requests with the specified priority. Defaults to all.
+        required: false
+        schema:
+          type: string
+          enum:
+          - NORMAL
+          - PRIORITY
+      - name: status
+        in: query
+        description: Set to only list change requests with the specified status (open, in-process, closed). Defaults to active states only, i.e. open and in-process.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - OPEN
+            - IN_PROCESS
+            - CLOSED
+      - name: start-date
+        in: query
+        description: Set to only list change requests created or last modified on or after this date/time. Expected date format is the ISO Date Time format, e.g. 2024-12-19T10:15:30+01:00. If the timezone offset is omitted (e.g. 2024-12-19T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2024-12-19), this defaults to the start of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: end-date
+        in: query
+        description: Set to only list change requests created or last modificed up to the specified date/time.Expected date format is the ISO Date Time format, e.g. 2024-12-19T10:15:30+01:00. If the timezone offset is omitted (e.g. 2024-12-19T10:15:30), the server timezone offset is used. If, in addition, the time is omitted (2024-12-19), this defaults to the start(!) of the specified day in the server timezone offset.
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 'The maximum number of change requests returned in the call. <b>Defaults to 20.</b> The size should not be set too high - offset can be used to retrieve further results.Response header contains x-total-count to indicate the total number of resulting change requests. Note that for users with limited rights, non-public change requests may be excluded from the result set even if counted as part of the x-total-count. '
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 20
+      - name: offset
+        in: query
+        description: The offset when not listing all change requests. Defaults to 0, i.e. starting with the first change request.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the requested change requests.
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChangeRequest'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChangeRequest'
+        '400':
+          description: General bad request.
+  /change-requests/{cid}:
+    get:
+      tags:
+      - Change Requests
+      summary: Gets one change request
+      description: ''
+      operationId: getChangeRequest
+      parameters:
+      - name: cid
+        in: path
+        description: The citeable identifier of the change request.
+        required: true
+        schema:
+          type: string
+      security:
+      - basicAuth: []
+      - sessionid: []
+      responses:
+        '200':
+          description: Successful retrieval of the change request.
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ChangeRequest'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangeRequest'
+        '400':
+          description: General bad request.
+        '404':
+          description: A change request with the specified citeable identifier does not exist (or is not visible to the current user).
+components:
+  schemas:
+    CkmResource:
+      type: object
+      properties:
+        cid:
+          type: string
+          example: 1013.1.130
+          description: The citeable identifier of this resource.
+        versionAsset:
+          type: integer
+          format: int32
+          example: 12
+          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
+        resourceMainId:
+          type: string
+          description: The main identifer for this resource.
+        resourceMainDisplayName:
+          type: string
+          description: The main display name for the retrieved resource.
+        resourceType:
+          type: string
+          description: The resource type of the retrieved resource.
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        templateType:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+        resourceDescription:
+          type: string
+          description: For archetypes, the concept description.
+        status:
+          type: string
+          example: PUBLISHED
+          description: The resource status of the retrieved resource.
+        versionAssetLatest:
+          type: integer
+          format: int32
+          example: 25
+          description: The latest asset version of this resource.
+        versionAssetLatestPublished:
+          type: integer
+          format: int32
+          example: 23
+          description: The latest published asset version of this resource.
+        uid:
+          type: string
+          description: For archetypes, the archetype's uid that usually only changes with each major version.
+        buildUid:
+          type: string
+          description: For archetypes, the archetype's build_uid that usually changes with each commit.
+        revision:
+          type: string
+          example: 1.0.0
+          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
+        revisionLatest:
+          type: string
+          example: 1.1.1-alpha
+          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
+        revisionLatestPublished:
+          type: string
+          example: 1.1.0
+          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
+        creationTime:
+          type: string
+          format: date-time
+          description: The initial creation time of this resource (in its initial version) in CKM.
+        modificationTime:
+          type: string
+          format: date-time
+          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
+        branchName:
+          type: string
+          description: If not a trunk resource, this states the name of the branch.
+        cidProject:
+          type: string
+          description: The citeable id of the project that owns this resource.
+        projectName:
+          type: string
+          description: The name of the project that owns this resource.
+      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
+    ChangeRequest:
+      type: object
+      properties:
+        cid:
+          type: string
+        versionAsset:
+          type: integer
+          format: int32
+        loginNameCreator:
+          type: string
+        userFullnameCreator:
+          type: string
+        loginNameLastModifier:
+          type: string
+        userFullnameLastModifier:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        modificationTime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - OPEN
+          - IN_PROCESS
+          - CLOSED
+        title:
+          type: string
+        priority:
+          type: string
+          enum:
+          - NORMAL
+          - PRIORITY
+        directLink:
+          type: string
+        crId:
+          type: string
+        ckmResource:
+          $ref: '#/components/schemas/CkmResource'
+  securitySchemes:
+    sessionid:
+      description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
+      type: apiKey
+      name: JSESSIONID
+      in: header
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic authentification using the CKM username and password. The provided credentials are used (and validated) on making an actual request.
+externalDocs:
+  description: Find out more about openEHR and the Clinical Knowledge Manager (CKM)
+  url: http://www.openehr.org
