@@ -923,92 +923,6 @@ paths:
           description: A template with the provided template-id does not exist or is not accessible based on the provided credentials.
 components:
   schemas:
-    CkmResource:
-      type: object
-      properties:
-        cid:
-          type: string
-          example: 1013.1.130
-          description: The citeable identifier of this resource.
-        versionAsset:
-          type: integer
-          format: int32
-          example: 12
-          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
-        resourceMainId:
-          type: string
-          description: The main identifer for this resource.
-        resourceMainDisplayName:
-          type: string
-          description: The main display name for the retrieved resource.
-        resourceType:
-          type: string
-          description: The resource type of the retrieved resource.
-          enum:
-          - ARCHETYPE
-          - TEMPLATE
-          - TERMSET
-          - RELEASESET
-        templateType:
-          type: string
-          enum:
-          - NORMAL
-          - ORDER_ITEM
-          - ORDER_SET
-          - KNOWLEDGE_TOPIC
-        resourceDescription:
-          type: string
-          description: For archetypes, the concept description.
-        status:
-          type: string
-          example: PUBLISHED
-          description: The resource status of the retrieved resource.
-        versionAssetLatest:
-          type: integer
-          format: int32
-          example: 25
-          description: The latest asset version of this resource.
-        versionAssetLatestPublished:
-          type: integer
-          format: int32
-          example: 23
-          description: The latest published asset version of this resource.
-        uid:
-          type: string
-          description: For archetypes, the archetype's uid that usually only changes with each major version.
-        buildUid:
-          type: string
-          description: For archetypes, the archetype's build_uid that usually changes with each commit.
-        revision:
-          type: string
-          example: 1.0.0
-          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
-        revisionLatest:
-          type: string
-          example: 1.1.1-alpha
-          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
-        revisionLatestPublished:
-          type: string
-          example: 1.1.0
-          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
-        creationTime:
-          type: string
-          format: date-time
-          description: The initial creation time of this resource (in its initial version) in CKM.
-        modificationTime:
-          type: string
-          format: date-time
-          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
-        branchName:
-          type: string
-          description: If not a trunk resource, this states the name of the branch.
-        cidProject:
-          type: string
-          description: The citeable id of the project that owns this resource.
-        projectName:
-          type: string
-          description: The name of the project that owns this resource.
-      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
     TemplateValidationItem:
       type: object
       properties:
@@ -1105,6 +1019,92 @@ components:
           - INFO
         licencingOrCopyrightError:
           type: boolean
+    CkmResource:
+      type: object
+      properties:
+        cid:
+          type: string
+          example: 1013.1.130
+          description: The citeable identifier of this resource.
+        versionAsset:
+          type: integer
+          format: int32
+          example: 12
+          description: The asset version of the retrieved resource. Defaults to the latest, if not explicitly requested otherwise.
+        resourceMainId:
+          type: string
+          description: The main identifer for this resource.
+        resourceMainDisplayName:
+          type: string
+          description: The main display name for the retrieved resource.
+        resourceType:
+          type: string
+          description: The resource type of the retrieved resource.
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        templateType:
+          type: string
+          enum:
+          - NORMAL
+          - ORDER_ITEM
+          - ORDER_SET
+          - KNOWLEDGE_TOPIC
+        resourceDescription:
+          type: string
+          description: For archetypes, the concept description.
+        status:
+          type: string
+          example: PUBLISHED
+          description: The resource status of the retrieved resource.
+        versionAssetLatest:
+          type: integer
+          format: int32
+          example: 25
+          description: The latest asset version of this resource.
+        versionAssetLatestPublished:
+          type: integer
+          format: int32
+          example: 23
+          description: The latest published asset version of this resource.
+        uid:
+          type: string
+          description: For archetypes, the archetype's uid that usually only changes with each major version.
+        buildUid:
+          type: string
+          description: For archetypes, the archetype's build_uid that usually changes with each commit.
+        revision:
+          type: string
+          example: 1.0.0
+          description: For archetypes, the archetype's Semantic Version for the REQUESTED asset version.
+        revisionLatest:
+          type: string
+          example: 1.1.1-alpha
+          description: For archetypes, the archetype's Semantic Version for the LATEST asset version.
+        revisionLatestPublished:
+          type: string
+          example: 1.1.0
+          description: For archetypes, the archetype's Semantic Version for the LATEST PUBLISHED asset version.
+        creationTime:
+          type: string
+          format: date-time
+          description: The initial creation time of this resource (in its initial version) in CKM.
+        modificationTime:
+          type: string
+          format: date-time
+          description: The modification time of the resource in CKM (in the specified asset version, which defaults to the latest if none specified.).
+        branchName:
+          type: string
+          description: If not a trunk resource, this states the name of the branch.
+        cidProject:
+          type: string
+          description: The citeable id of the project that owns this resource.
+        projectName:
+          type: string
+          description: The name of the project that owns this resource.
+      description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
     Project:
       type: object
       properties:
