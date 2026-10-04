@@ -1019,6 +1019,30 @@ components:
           - INFO
         licencingOrCopyrightError:
           type: boolean
+    Project:
+      type: object
+      properties:
+        cid:
+          type: string
+        name:
+          type: string
+        projectURL:
+          type: string
+        cidSubdomain:
+          type: string
+        subdomainName:
+          type: string
+        public:
+          type: boolean
+        projectType:
+          type: string
+          enum:
+          - PROJECT
+          - INCUBATOR
+        remoteSubdomain:
+          type: boolean
+        forOrderTemplates:
+          type: boolean
     CkmResource:
       type: object
       properties:
@@ -1105,30 +1129,6 @@ components:
           type: string
           description: The name of the project that owns this resource.
       description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
-    Project:
-      type: object
-      properties:
-        cid:
-          type: string
-        name:
-          type: string
-        projectURL:
-          type: string
-        cidSubdomain:
-          type: string
-        subdomainName:
-          type: string
-        public:
-          type: boolean
-        projectType:
-          type: string
-          enum:
-          - PROJECT
-          - INCUBATOR
-        remoteSubdomain:
-          type: boolean
-        forOrderTemplates:
-          type: boolean
   securitySchemes:
     sessionid:
       description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.

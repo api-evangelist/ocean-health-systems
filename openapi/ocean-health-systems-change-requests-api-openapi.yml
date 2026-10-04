@@ -140,6 +140,49 @@ paths:
           description: A change request with the specified citeable identifier does not exist (or is not visible to the current user).
 components:
   schemas:
+    ChangeRequest:
+      type: object
+      properties:
+        cid:
+          type: string
+        versionAsset:
+          type: integer
+          format: int32
+        loginNameCreator:
+          type: string
+        userFullnameCreator:
+          type: string
+        loginNameLastModifier:
+          type: string
+        userFullnameLastModifier:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        modificationTime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - OPEN
+          - IN_PROCESS
+          - CLOSED
+        title:
+          type: string
+        priority:
+          type: string
+          enum:
+          - NORMAL
+          - PRIORITY
+        directLink:
+          type: string
+        crId:
+          type: string
+        ckmResource:
+          $ref: '#/components/schemas/CkmResource'
     CkmResource:
       type: object
       properties:
@@ -226,49 +269,6 @@ components:
           type: string
           description: The name of the project that owns this resource.
       description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
-    ChangeRequest:
-      type: object
-      properties:
-        cid:
-          type: string
-        versionAsset:
-          type: integer
-          format: int32
-        loginNameCreator:
-          type: string
-        userFullnameCreator:
-          type: string
-        loginNameLastModifier:
-          type: string
-        userFullnameLastModifier:
-          type: string
-        creationTime:
-          type: string
-          format: date-time
-        modificationTime:
-          type: string
-          format: date-time
-        description:
-          type: string
-        status:
-          type: string
-          enum:
-          - OPEN
-          - IN_PROCESS
-          - CLOSED
-        title:
-          type: string
-        priority:
-          type: string
-          enum:
-          - NORMAL
-          - PRIORITY
-        directLink:
-          type: string
-        crId:
-          type: string
-        ckmResource:
-          $ref: '#/components/schemas/CkmResource'
   securitySchemes:
     sessionid:
       description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
