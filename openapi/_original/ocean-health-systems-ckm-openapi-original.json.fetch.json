@@ -1,0 +1,12 @@
+{
+ "url": "https://ckm.openehr.org/ckm/rest/v1/swagger.json",
+ "requested_url": "https://ckm.openehr.org/ckm/rest/v1/swagger.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 86725,
+ "sha256": "f087f4906fa318de6f42976294fd37d7388734c63f36a8296416cd75c7ea6f5d",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}
