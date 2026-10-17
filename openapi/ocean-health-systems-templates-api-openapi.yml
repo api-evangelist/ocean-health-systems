@@ -923,102 +923,6 @@ paths:
           description: A template with the provided template-id does not exist or is not accessible based on the provided credentials.
 components:
   schemas:
-    TemplateValidationItem:
-      type: object
-      properties:
-        errorType:
-          type: string
-        errorText:
-          type: string
-        errorDescription:
-          type: string
-        cidResource:
-          type: string
-        resourceMainId:
-          type: string
-        resourceMainDisplayName:
-          type: string
-        assetVersion:
-          type: integer
-          format: int32
-        assetVersionLatest:
-          type: integer
-          format: int32
-        assetVersionLatestPublished:
-          type: integer
-          format: int32
-        revisionNumber:
-          type: string
-        revisionNumberLatest:
-          type: string
-        revisionNumberLatestPublished:
-          type: string
-        resourceType:
-          type: string
-          enum:
-          - ARCHETYPE
-          - TEMPLATE
-          - TERMSET
-          - RELEASESET
-        expectedHash:
-          type: string
-          description: The hash from the integrity check section of the provided template.
-        foundHash:
-          type: string
-          description: The hash in the latest revision of the archetype.
-        foundHashLatestPublished:
-          type: string
-          description: The hash in the latest PUBLISHED revision of the archetype, if any.
-        statusAtVersion:
-          type: string
-          enum:
-          - INITIAL
-          - DRAFT
-          - TEAMREVIEW
-          - REVIEWSUSPENDED
-          - RELEASECANDIDATE
-          - PUBLISHED
-          - REASSESS_DRAFT
-          - REASSESS_TEAMREVIEW
-          - REASSESS_REVIEWSUSPENDED
-          - REJECTED
-          - DEPRECATED
-        statusLatest:
-          type: string
-          enum:
-          - INITIAL
-          - DRAFT
-          - TEAMREVIEW
-          - REVIEWSUSPENDED
-          - RELEASECANDIDATE
-          - PUBLISHED
-          - REASSESS_DRAFT
-          - REASSESS_TEAMREVIEW
-          - REASSESS_REVIEWSUSPENDED
-          - REJECTED
-          - DEPRECATED
-        statusLatestPublished:
-          type: string
-          enum:
-          - INITIAL
-          - DRAFT
-          - TEAMREVIEW
-          - REVIEWSUSPENDED
-          - RELEASECANDIDATE
-          - PUBLISHED
-          - REASSESS_DRAFT
-          - REASSESS_TEAMREVIEW
-          - REASSESS_REVIEWSUSPENDED
-          - REJECTED
-          - DEPRECATED
-        validationSeverity:
-          type: string
-          enum:
-          - FATAL
-          - WARNING
-          - INFO
-        licencingOrCopyrightError:
-          type: boolean
     Project:
       type: object
       properties:
@@ -1129,6 +1033,102 @@ components:
           type: string
           description: The name of the project that owns this resource.
       description: Contains the relevant main data to describe a CKM resource such as an archetype or a template.
+    TemplateValidationItem:
+      type: object
+      properties:
+        errorType:
+          type: string
+        errorText:
+          type: string
+        errorDescription:
+          type: string
+        cidResource:
+          type: string
+        resourceMainId:
+          type: string
+        resourceMainDisplayName:
+          type: string
+        assetVersion:
+          type: integer
+          format: int32
+        assetVersionLatest:
+          type: integer
+          format: int32
+        assetVersionLatestPublished:
+          type: integer
+          format: int32
+        revisionNumber:
+          type: string
+        revisionNumberLatest:
+          type: string
+        revisionNumberLatestPublished:
+          type: string
+        resourceType:
+          type: string
+          enum:
+          - ARCHETYPE
+          - TEMPLATE
+          - TERMSET
+          - RELEASESET
+        expectedHash:
+          type: string
+          description: The hash from the integrity check section of the provided template.
+        foundHash:
+          type: string
+          description: The hash in the latest revision of the archetype.
+        foundHashLatestPublished:
+          type: string
+          description: The hash in the latest PUBLISHED revision of the archetype, if any.
+        statusAtVersion:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        statusLatest:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        statusLatestPublished:
+          type: string
+          enum:
+          - INITIAL
+          - DRAFT
+          - TEAMREVIEW
+          - REVIEWSUSPENDED
+          - RELEASECANDIDATE
+          - PUBLISHED
+          - REASSESS_DRAFT
+          - REASSESS_TEAMREVIEW
+          - REASSESS_REVIEWSUSPENDED
+          - REJECTED
+          - DEPRECATED
+        validationSeverity:
+          type: string
+          enum:
+          - FATAL
+          - WARNING
+          - INFO
+        licencingOrCopyrightError:
+          type: boolean
   securitySchemes:
     sessionid:
       description: Once the session id is known, it can be used for authentication until expired. The provided session id is used (and validated) on making an actual request.
