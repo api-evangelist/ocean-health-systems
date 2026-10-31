@@ -64,5 +64,123 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Ocean Health Systems is a company surfaced via the API Evangelist harvest backlog (source: openehr-coalition) and added to the network as a stub for full-pipeline profiling.
-- http://www.oceanhealthsystems.com/
+Ocean Health Systems (legally Ocean Informatics Pty Ltd, founded 1998, with offices in Bundall QLD, Chatswood NSW and London) is the Australian clinical-informatics company whose founders commercialised the first openEHR clinical data repository and built Clinical Knowledge Manager (CKM) — the repository and collaborative governance environment in which openEHR archetypes, templates, terminology subsets and release sets are authored, peer reviewed, semantically versioned, approved and published, with terminology binding to SNOMED CT and LOINC and mappings out to FHIR and OMOP. CKM runs the international openEHR community instance as well as national and vendor deployments, and ships a documented Swagger 2.0 REST API (48 operations) for discovering models and pulling their ADL, XML, OET and Operational Template representations. Ocean also builds Multiprac Immunize and Multiprac Surveillance for immunisation and infection prevention, and publishes the free Archetype Editor and Template Designer authoring tools.
+
+**Areas:** Health · Healthcare · Electronic Health Records · openEHR · Clinical Data · Clinical Knowledge Management · Interoperability · Health Informatics · Terminology · Archetypes · Infection Prevention · immunisation
+
+## Ocean Health Systems on APIs.io
+
+Everything profiled for Ocean Health Systems is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/ocean-health-systems/](https://apis.io/providers/ocean-health-systems/)** — or go straight to one of the APIs or properties below.
+
+### APIs (9)
+
+- [Ocean Health Systems Archetypes API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-archetypes-api/) — Endpoint for archetype-related services, including listing and getting archetypes.
+- [Ocean Health Systems Change Requests API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-change-requests-api/) — Endpoint for change request-related services, including listing and getting change requests.
+- [Ocean Health Systems Projects API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-projects-api/) — Endpoint for project-related services, including listing and getting projects.
+- [Ocean Health Systems Resource Proposals API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-resource-proposals-api/) — Endpoint for resource proposal-related services, including listing and getting resource proposals.
+- [Ocean Health Systems Resources API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-resources-api/) — Endpoint for generic resources, including archetypes and templates. May sometimes be easier to use.
+- [Ocean Health Systems Sessions API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-sessions-api/) — Endpoint for creating a new user session or signing out.
+- [Ocean Health Systems Subdomains API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-subdomains-api/) — Endpoint for subdomain-related services, including listing and getting subdomains.
+- [Ocean Health Systems Templates API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-templates-api/) — Endpoint for template-related services, including listing and getting templates.
+- [Ocean Health Systems Users API](https://apis.io/apis/ocean-health-systems/ocean-health-systems-users-api/) — Endpoint for user-related services, including creating new users as an admin.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Ocean Health Systems CKM (candidate MCP server)](https://apis.io/servers/ocean-health-systems/ocean-health-systems-ckm-candidate-mcp-server/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Ocean Health Systems Ckm Rest Api Overlay](https://apis.io/overlays/ocean-health-systems/ocean-health-systems-ckm-rest-api-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Ocean Health Systems Authentication](https://apis.io/security/ocean-health-systems/ocean-health-systems-authentication/)
+- [Ocean Health Systems Domain Security](https://apis.io/security/ocean-health-systems/ocean-health-systems-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Ocean Health Systems Plans Pricing](https://apis.io/plans/ocean-health-systems/ocean-health-systems-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Ocean Health Systems Rate Limits](https://apis.io/rate-limits/ocean-health-systems/ocean-health-systems-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://oceanhealthsystems.com/)
+- [Documentation](https://ckm.openehr.org/ckm/rest-doc/)
+- [API reference](https://ckm.openehr.org/ckm/rest-doc/)
+- [Support](https://oceanehr.atlassian.net/servicedesk/customer/portal/15)
+- [Blog](https://oceanhealthsystems.com/media/)
+- [Terms of service](https://oceanhealthsystems.com/fair-use-policy/)
+- [Privacy policy](https://oceanhealthsystems.com/privacy-policy/)
+- [GitHub](https://github.com/OceanHealthSystems)
+
+## API Evangelist rating
+
+**Kin Score 32.4** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 42.9 |
+| Contract governance | 4.5 |
+| Operational transparency | 18.4 |
+| Developer ergonomics | 37.5 |
+| Access clarity | 21.1 |
+
+**Agent readiness 22.1** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 19.5** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/ocean-health-systems/](https://apis.io/providers/ocean-health-systems/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Ocean Health Systems: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/ocean-health-systems/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
